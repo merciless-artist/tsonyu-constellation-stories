@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constellation Memories - Life Stories in the Stars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;700&family=Quicksand:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333;
+        }
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+        }
+        .constellation-card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .constellation-card h3 {
+            border-bottom: 1px solid #EAEAEA;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4a90e2 0%, #50c9c3 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        #loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a90e2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        @keyframes twinkleSlow {
+            0% { opacity: 0.2; }
+            25% { opacity: 0.8; }
+            75% { opacity: 0.8; }
+            100% { opacity: 0.2; }
+        }
+        @keyframes twinkleFast {
+            0% { opacity: 0.4; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1.2); }
+            66% { opacity: 0.2; transform: scale(0.9); }
+            100% { opacity: 0.4; transform: scale(1); }
+        }
+        .moon-glow {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(200, 230, 255, 0.8), rgba(100, 150, 200, 0.3), transparent);
+            box-shadow: 0 0 50px rgba(100, 150, 200, 0.5), 0 0 100px rgba(100, 150, 200, 0.3);
+            animation: moonGlow 8s ease-in-out infinite alternate;
+        }
+        @keyframes moonGlow {
+            0% { 
+                transform: scale(1);
+                opacity: 0.7;
+                box-shadow: 0 0 50px rgba(100, 150, 200, 0.5), 0 0 100px rgba(100, 150, 200, 0.3);
+            }
+            100% { 
+                transform: scale(1.05);
+                opacity: 0.9;
+                box-shadow: 0 0 60px rgba(100, 150, 200, 0.6), 0 0 120px rgba(100, 150, 200, 0.4);
+            }
+        }
+        .message-star {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.5);
+            animation: messageStarTwinkle 2s infinite alternate;
+        }
+        .message-star::before {
+            content: '✨';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            opacity: 0.8;
+            animation: sparkle 3s infinite;
+        }
+        .message-star.approaching {
+            animation: approachingGlow 2s infinite;
+        }
+        @keyframes approachingGlow {
+            0%, 100% { 
+                box-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.5);
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(251, 191, 36, 1), 0 0 60px rgba(251, 191, 36, 0.8);
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+        }
+        @keyframes messageStarTwinkle {
+            0% { 
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.5);
+            }
+            100% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 25px rgba(251, 191, 36, 1), 0 0 50px rgba(251, 191, 36, 0.7);
+            }
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+        }
+        .falling-star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ffffff 0%, #fbbf24 50%, #f59e0b 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(251, 191, 36, 0.6);
+            animation: fallingStar 3s ease-in forwards;
+            z-index: 30;
+        }
+        .falling-star::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8) 0%, rgba(251,191,36,0.6) 50%, transparent 100%);
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%);
+            animation: starTrail 3s ease-in forwards;
+        }
+        @keyframes fallingStar {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                top: 50%;
+                left: 50%;
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+        @keyframes starTrail {
+            0% { opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+        .uploading-message {
+            position: absolute;
+            color: rgba(251, 191, 36, 0.9);
+            font-size: 14px;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 500;
+            pointer-events: none;
+            animation: floatToStars 3s ease-out forwards;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        @keyframes floatToStars {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            70% {
+                opacity: 0.8;
+                transform: translate(-50%, -150px) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -200px) scale(0.3);
+            }
+        }
+        .handwriting-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+            font-weight: 600;
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+            line-height: 1.4;
+        }
+        .message-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: #fbbf24;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 12px;
+            z-index: 100;
+            animation: counterGlow 3s infinite ease-in-out;
+        }
+        @keyframes counterGlow {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+            }
+        }
+        .star-canvas {
+            background: linear-gradient(to bottom, #0f172a, #312e81, #000000);
+        }
+        .memory-star {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #ffffff 0%, #fbbf24 30%, #f59e0b 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.3);
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .memory-star:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(251, 191, 36, 0.4);
+        }
+        .memory-star::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: inherit;
+            animation: twinkle 2s infinite alternate;
+        }
+        .constellation-line {
+            stroke: rgba(200, 200, 255, 0.6);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 3px rgba(200, 200, 255, 0.3));
+        }
+        .memory-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'Quicksand', sans-serif;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 200px;
+            text-align: center;
+        }
+        .phase-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .phase-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 500;
+        }
+        .phase-btn.active {
+            border-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.2);
+        }
+        .phase-btn:hover {
+            background: rgba(251, 191, 36, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Input Phase -->
+    <div id="inputPhase" class="bg-[#FDFBF8] min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <main class="w-full max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl sm:text-5xl font-bold text-gray-800">Constellation Memories</h1>
+                <p class="text-lg text-gray-600 mt-2">Transforming life stories into visual constellations of memories.</p>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Enter a Life Story</h2>
+                <p class="text-gray-500 mb-4">Paste a biography, obituary, or life story below. The AI will find key memories and create a beautiful constellation from them.</p>
+                <textarea id="transcriptInput" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-shadow duration-200" placeholder="Paste the life story here..."></textarea>
+                
+                <div class="text-center mt-6">
+                    <button id="generateButton" class="btn-primary text-white font-bold py-3 px-8 rounded-full text-lg">
+                        Create Memory Constellation
+                    </button>
+                </div>
+            </div>
+
+            <div id="loading" class="text-center my-8 hidden">
+                <div id="loader" class="mx-auto"></div>
+                <p class="mt-4 text-gray-600">Analyzing memories and positioning stars... this may take a moment.</p>
+            </div>
+            
+            <div id="error" class="text-center my-8 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                <p id="errorMessage"></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Constellation Visualization Phase -->
+    <div id="constellationPhase" class="hidden relative w-full h-screen star-canvas overflow-hidden">
+        <!-- Background stars -->
+        <div id="backgroundStars"></div>
+        
+        <!-- Main constellation canvas -->
+        <div id="starCanvas" class="absolute inset-0">
+            <!-- Memory stars and constellation lines will be rendered here -->
+            <svg id="constellationSvg" class="absolute inset-0 w-full h-full pointer-events-none"></svg>
+            <div id="memoryStars"></div>
+            <div id="memoryTooltip" class="memory-tooltip"></div>
+        </div>
+
+        <!-- UI Controls -->
+        <div class="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
+            <div>
+                <h1 class="text-2xl font-light text-white/90" style="font-family: 'Quicksand', sans-serif;">
+                    <span id="constellationTitle">Memory Constellation</span>
+                </h1>
+                <p class="text-white/70 text-sm mt-1" style="font-family: 'Quicksand', sans-serif;">
+                    Hover over stars to see memories • Click to reveal the story
+                </p>
+            </div>
+            
+            <div class="flex gap-4 flex-wrap">
+                <button id="toggleMessageMode" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-2.5 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">✨ Add Message Stars</span>
+                </button>
+                
+                <button id="showDebugButton" class="bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/10">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">Debug</span>
+                </button>
+                
+                <button id="downloadButton" class="bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/10">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">Download</span>
+                </button>
+                
+                <button id="revealStoryButton" class="bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/10">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">Reveal Story</span>
+                </button>
+                
+                <button id="viewCollection" class="bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/10">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">💫 Collection</span>
+                </button>
+                
+                <button id="newStoryButton" class="bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/10">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">New Story</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Constellation story display -->
+        <div id="storyPanel" class="absolute bottom-6 left-6 right-6 hidden">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg border border-white/20">
+                <h2 id="storyTitle" class="text-xl font-semibold text-purple-300 mb-3" style="font-family: 'Quicksand', sans-serif;"></h2>
+                <p id="storyNarrative" class="text-purple-100 leading-relaxed whitespace-pre-wrap" style="font-family: 'Quicksand', sans-serif;"></p>
+            </div>
+        </div>
+        
+        <!-- Debug panel -->
+        <div id="debugPanel" class="absolute top-6 left-6 hidden max-w-sm">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20">
+                <h3 class="text-lg font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">Pattern Analysis</h3>
+                <div id="debugContent" class="text-white text-sm space-y-2" style="font-family: 'Quicksand', sans-serif;"></div>
+            </div>
+        </div>
+        
+        <!-- Message Star Instructions -->
+        <div id="messageStarInstructions" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden text-center">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg border border-white/20">
+                <h3 class="text-xl font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">✨ Create Message Stars ✨</h3>
+                <p class="text-white/80 mb-4" style="font-family: 'Quicksand', sans-serif;">
+                    Click anywhere in the empty sky to create a special star<br>
+                    Each star can hold a message, memory, or words of love<br>
+                    They'll randomly fall and surprise you in the future! 💫
+                </p>
+                <div class="flex gap-2 justify-center">
+                    <button id="testFallingStar" class="bg-purple-500/20 hover:bg-purple-500/30 text-white px-3 py-1 rounded text-xs transition-all duration-200">
+                        <span style="font-family: 'Quicksand', sans-serif;">Test Star ⭐</span>
+                    </button>
+                    <button id="exitMessageMode" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                        <span style="font-family: 'Quicksand', sans-serif;">Done Creating</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Message Star Modal -->
+        <div id="messageStarModal" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-6 max-w-md w-full mx-4 shadow-lg border border-white/20">
+                <h3 class="text-xl font-semibold text-white mb-4" style="font-family: 'Quicksand', sans-serif;">✨ Your Message to the Stars ✨</h3>
+                <textarea id="messageStarText" rows="4" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-white/50 border border-white/20 resize-none" 
+                    placeholder="Write a message, memory, or words of love..."></textarea>
+                <div class="flex gap-3 mt-4 justify-end">
+                    <button id="cancelMessageStar" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                        <span style="font-family: 'Quicksand', sans-serif;">Cancel</span>
+                    </button>
+                    <button id="saveMessageStar" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-lg transition-all duration-200 shadow-lg">
+                        <span style="font-family: 'Quicksand', sans-serif;">Create Star ⭐</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Falling Star Message Display -->
+        <div id="fallingStarMessage" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden z-40">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-8 shadow-lg border border-white/20 max-w-lg">
+                <div class="text-center mb-6">
+                    <div class="text-5xl mb-3">⭐</div>
+                    <h3 class="text-xl font-semibold text-purple-300 mb-2" style="font-family: 'Quicksand', sans-serif;">A Message From Your Heart</h3>
+                    <p class="text-purple-200/80 text-sm" style="font-family: 'Quicksand', sans-serif;">
+                        Written during <span id="messageTimestamp"></span>
+                    </p>
+                </div>
+                <div class="bg-black/30 rounded-lg p-6 mb-6 border border-purple-300/20">
+                    <p id="fallingStarMessageText" class="handwriting-message text-center"></p>
+                </div>
+                <div class="flex gap-3 justify-center">
+                    <button id="saveToCollection" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-lg">
+                        <span style="font-family: 'Quicksand', sans-serif;">💫 Keep Forever</span>
+                    </button>
+                    <button id="sendBackToStars" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                        <span style="font-family: 'Quicksand', sans-serif;">✨ Send Back</span>
+                    </button>
+                    <button id="closeFallingMessage" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                        <span style="font-family: 'Quicksand', sans-serif;">Thank you 💕</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Message Counter -->
+        <div id="messageCounter" class="message-counter hidden">
+            <span id="counterText">✨ 0 messages traveling through time</span>
+        </div>
+        
+        <!-- Permanent Collection -->
+        <div id="permanentCollection" class="absolute top-6 right-6 hidden max-w-xs">
+            <div class="bg-white/10 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20">
+                <h3 class="text-lg font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">💫 Forever Stars</h3>
+                <div id="collectionContent" class="text-white text-sm space-y-2 max-h-60 overflow-y-auto" style="font-family: 'Quicksand', sans-serif;"></div>
+                <button id="closePermanentCollection" class="mt-3 text-xs text-white/70 hover:text-white">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentMemories = [];
+        let currentBiographicalData = null;
+        let animatedLines = [];
+        let isRevealing = false;
+        let messageStars = [];
+        let permanentCollection = [];
+        let isMessageMode = false;
+        let pendingStarPosition = null;
+        let fallingStarInterval = null;
+        let currentFallingStar = null;
+
+        // DOM elements
+        const inputPhase = document.getElementById('inputPhase');
+        const constellationPhase = document.getElementById('constellationPhase');
+        const transcriptInput = document.getElementById('transcriptInput');
+        const generateButton = document.getElementById('generateButton');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        const backgroundStars = document.getElementById('backgroundStars');
+        const starCanvas = document.getElementById('starCanvas');
+        const constellationSvg = document.getElementById('constellationSvg');
+        const memoryStars = document.getElementById('memoryStars');
+        const memoryTooltip = document.getElementById('memoryTooltip');
+        
+        const constellationTitle = document.getElementById('constellationTitle');
+        const downloadButton = document.getElementById('downloadButton');
+        const revealStoryButton = document.getElementById('revealStoryButton');
+        const newStoryButton = document.getElementById('newStoryButton');
+        const showDebugButton = document.getElementById('showDebugButton');
+        const toggleMessageMode = document.getElementById('toggleMessageMode');
+        const viewCollection = document.getElementById('viewCollection');
+        const storyPanel = document.getElementById('storyPanel');
+        const storyTitle = document.getElementById('storyTitle');
+        const storyNarrative = document.getElementById('storyNarrative');
+        const debugPanel = document.getElementById('debugPanel');
+        const debugContent = document.getElementById('debugContent');
+        
+        // Message star elements
+        const messageStarInstructions = document.getElementById('messageStarInstructions');
+        const exitMessageMode = document.getElementById('exitMessageMode');
+        const testFallingStar = document.getElementById('testFallingStar');
+        const messageStarModal = document.getElementById('messageStarModal');
+        const messageStarText = document.getElementById('messageStarText');
+        const cancelMessageStar = document.getElementById('cancelMessageStar');
+        const saveMessageStar = document.getElementById('saveMessageStar');
+        const fallingStarMessage = document.getElementById('fallingStarMessage');
+        const fallingStarMessageText = document.getElementById('fallingStarMessageText');
+        const messageTimestamp = document.getElementById('messageTimestamp');
+        const closeFallingMessage = document.getElementById('closeFallingMessage');
+        const saveToCollection = document.getElementById('saveToCollection');
+        const sendBackToStars = document.getElementById('sendBackToStars');
+        const messageCounter = document.getElementById('messageCounter');
+        const counterText = document.getElementById('counterText');
+        const permanentCollectionPanel = document.getElementById('permanentCollection');
+        const collectionContent = document.getElementById('collectionContent');
+        const closePermanentCollection = document.getElementById('closePermanentCollection');
+
+        // Sample data with different personality types for testing
+        const exampleTexts = {
+            familyCentered: `Barbara Ann Worple-Gransee, 82, of Janesville, passed away at home on Tuesday, Feb. 2, 2010. She was born Oct. 30, 1927, in Worthington, MN, the daughter of Roy and Myra (Johnson) Hanthorn. She was a graduate of Janesville High School. Barb married Stuart "Stu" Gransee; he died in 1982. She was a member of First Lutheran Church. She had a very special Thank You for her friends, "the swim girls": Sis Stewart, Iona Edwards, and Ruthie. Barb would like those planning an expression of sympathy to consider taking a friend to lunch and tell them how much you've enjoyed their friendship.
+She is survived by her 5 children: Todd (Kathy) Worple of Florence, Jeff (Laurie) Worple of Janesville, Judy Worple of Reedsburg, Connie Pomije of Madison, and Erich (Darcy) Worple of Janesville; 4 step-children: Karen (Ron) Hensley, Linda Schumacher, Steven (Yvonne) Gransee, and Robert (Lisa) Gransee; 11 grandchildren: Dylan, Riley (Pharin), Ladd (Amanda), Ericha, Myra, Emily, Abram, Taylor, Owen, Sam, and Joe; and 2 great-grandchildren. She was preceded in death by her parents; husband, Stu; and a brother, Carrol Hanthorn.`,
+            
+            adventureSeeker: `Captain James "Jimmy" Sullivan, 89, died peacefully on March 15, 2023, in Portland, Oregon. Born in Boston in 1934, Jimmy spent his early years dreaming of the sea. At 18, he joined the Merchant Marine and spent the next 40 years sailing the world's oceans. He visited over 150 countries, learned 6 languages, and collected stories from every port. In 1978, while docked in Singapore, he met Maria Santos, a travel journalist. They married in Fiji and honeymooned by backpacking through New Zealand. Jimmy retired from shipping at 58 and became a wilderness guide in Alaska, leading adventurers through uncharted territories until he was 75. He climbed mountains on every continent, survived three shipwrecks, and once spent a winter alone in the Arctic. Jimmy founded the Young Explorers Club, mentoring over 200 young adventurers. He wrote three books about his travels and donated his collection of artifacts from around the world to the Maritime Museum. Jimmy is survived by his wife Maria, his daughter Captain Elena Sullivan-Chen (who follows in his footsteps), and countless friends from around the globe who remember his infectious laugh and endless stories.`,
+            
+            communityLeader: `Dr. Eleanor Patricia Washington, 76, beloved educator and community pillar, passed away on June 8, 2024, surrounded by the hundreds of lives she touched. Born in Montgomery, Alabama in 1948, Eleanor was the daughter of civil rights activists Robert and Mary Washington. She earned her PhD in Education from Howard University in 1975 and immediately returned home to transform her community. As principal of Lincoln Elementary for 30 years, she raised graduation rates from 45% to 98%. Eleanor founded the Community Learning Center, which provides after-school tutoring, job training, and family support services. She served on 12 nonprofit boards, organized the annual Unity Festival that draws 50,000 people, and mentored over 300 teachers throughout her career. Eleanor married her college sweetheart, Rev. Michael Washington, in 1973. Together they adopted 4 children and fostered 23 others. She received the Presidential Medal for Education in 2010 and was inducted into the Alabama Hall of Fame in 2018. Eleanor's Tuesday evening community dinners fed thousands of families over the decades. She spoke at over 200 schools and conferences, always advocating for educational equity. Eleanor is survived by her husband of 51 years, her children David, Sarah, Michael Jr., and Jennifer, 18 grandchildren, and an entire community that called her "Mama Eleanor."`,
+            
+            quietScholar: `Professor Margaret Rose Chen, 71, passed away quietly at her home library on September 3, 2024, surrounded by the 10,000 books that were her closest companions. Born in San Francisco in 1953, Margaret was the daughter of Chinese immigrants who ran a small bookstore in Chinatown. A brilliant but intensely private person, she earned her PhD in Medieval Literature from Stanford at age 24 and spent the next 45 years in deep study. Margaret authored 8 scholarly books on 12th-century manuscripts, but published under a pseudonym, shunning all publicity. Her translations of ancient Chinese poetry were considered masterworks, though few knew she was the author. Margaret lived alone by choice in the same cottage for 40 years, tending a garden of rare medicinal herbs and corresponding with scholars worldwide through handwritten letters. She spoke 7 languages fluently but preferred the company of books to people. Margaret's only close relationship was with her neighbor's cat, Aristotle, who visited her daily for 15 years. She left her entire estate to create a private research library. Margaret never married or had children, but touched countless lives through her anonymous charitable donations that funded 200 students' educations. Her funeral was attended by only 6 people, yet her scholarly work will influence generations.`
+        };
+        
+        // Set default example (family-centered)
+        transcriptInput.value = exampleTexts.familyCentered;
+        
+        // Add example selector for testing
+        const exampleSelector = document.createElement('div');
+        exampleSelector.className = 'mt-4 flex gap-2 flex-wrap';
+        exampleSelector.innerHTML = `
+            <span class="text-sm text-gray-600">Test Examples:</span>
+            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="familyCentered">Family-Centered</button>
+            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="adventureSeeker">Adventure Seeker</button>
+            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="communityLeader">Community Leader</button>
+            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="quietScholar">Quiet Scholar</button>
+        `;
+        
+        // Insert after the textarea
+        transcriptInput.parentNode.insertBefore(exampleSelector, transcriptInput.nextSibling);
+        
+        // Add event listeners for example buttons
+        exampleSelector.addEventListener('click', (e) => {
+            if (e.target.classList.contains('example-btn')) {
+                const exampleType = e.target.dataset.example;
+                transcriptInput.value = exampleTexts[exampleType];
+                
+                // Update button states
+                exampleSelector.querySelectorAll('.example-btn').forEach(btn => {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-blue-100', 'text-blue-800');
+                });
+                e.target.classList.remove('bg-blue-100', 'text-blue-800');
+                e.target.classList.add('bg-blue-600', 'text-white');
+            }
+        });
+
+        // Initialize background stars based on personality
+        function initializeBackgroundStars() {
+            backgroundStars.innerHTML = '';
+            
+            const personality = currentBiographicalData?.personality || {};
+            const socialOrientation = personality.social_orientation || 'ambivert';
+            const connectionStyle = personality.connection_style || 'family-centered';
+            
+            // Adjust star count and distribution based on personality
+            let starCount, distribution, brightness;
+            
+            switch (socialOrientation) {
+                case 'introvert':
+                    starCount = 80;  // fewer, more intimate sky
+                    distribution = 'clustered';
+                    brightness = 0.6;
+                    break;
+                case 'extrovert':
+                    starCount = 200; // many stars for social personalities
+                    distribution = 'scattered';
+                    brightness = 0.8;
+                    break;
+                default: // ambivert
+                    starCount = 130;
+                    distribution = 'balanced';
+                    brightness = 0.7;
+            }
+            
+            // Create background stars with personality-based patterns
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'absolute rounded-full bg-white';
+                
+                // Position based on distribution pattern
+                let x, y;
+                if (distribution === 'clustered') {
+                    // Create several clusters for introverts
+                    const clusterCenter = Math.floor(Math.random() * 4);
+                    const centers = [
+                        { x: 25, y: 25 },
+                        { x: 75, y: 25 },
+                        { x: 25, y: 75 },
+                        { x: 75, y: 75 }
+                    ];
+                    const center = centers[clusterCenter];
+                    x = center.x + (Math.random() - 0.5) * 40;
+                    y = center.y + (Math.random() - 0.5) * 40;
+                } else if (distribution === 'scattered') {
+                    // More random for extroverts
+                    x = Math.random() * 100;
+                    y = Math.random() * 100;
+                } else {
+                    // Balanced distribution
+                    x = Math.random() * 100;
+                    y = Math.random() * 100;
+                }
+                
+                // Avoid placing stars where the moon will be (bottom right area)
+                if (x > 70 && y > 60) {
+                    x = Math.random() * 70; // Move to left side
+                }
+                
+                star.style.left = Math.max(0, Math.min(100, x)) + '%';
+                star.style.top = Math.max(0, Math.min(100, y)) + '%';
+                
+                // Size and brightness variations
+                const size = Math.random() * 1.8 + 0.4;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.opacity = Math.random() * brightness;
+                
+                // Enhanced twinkling variations
+                const twinkleType = Math.random();
+                let animation;
+                
+                if (twinkleType < 0.6) {
+                    // Regular twinkling - most stars
+                    const twinkleSpeed = socialOrientation === 'introvert' ? 
+                        Math.random() * 2 + 3 : // slower, more meditative
+                        Math.random() * 2 + 2;  // faster, more energetic
+                    animation = `twinkle ${twinkleSpeed}s infinite alternate`;
+                } else if (twinkleType < 0.8) {
+                    // Slow, gentle twinkling
+                    animation = `twinkleSlow ${Math.random() * 4 + 6}s infinite`;
+                } else {
+                    // Fast, energetic twinkling - rare stars
+                    animation = `twinkleFast ${Math.random() * 1 + 1.5}s infinite`;
+                }
+                
+                star.style.animation = animation;
+                backgroundStars.appendChild(star);
+            }
+            
+            // Add personality-specific background gradient
+            updateBackgroundGradient(personality);
+            
+            // Add moon in empty space area
+            addMoonToSky();
+        }
+        
+        // Add moon with glow effect
+        function addMoonToSky() {
+            // Remove existing moon if any
+            const existingMoon = constellationPhase.querySelector('.moon-container');
+            if (existingMoon) {
+                existingMoon.remove();
+            }
+            
+            const moonContainer = document.createElement('div');
+            moonContainer.className = 'moon-container absolute';
+            moonContainer.style.right = '8%';
+            moonContainer.style.bottom = '12%';
+            moonContainer.style.width = '100px';
+            moonContainer.style.height = '100px';
+            moonContainer.style.zIndex = '5';
+            
+            // Add glow effect behind moon
+            const moonGlow = document.createElement('div');
+            moonGlow.className = 'moon-glow';
+            moonGlow.style.left = '-10px';
+            moonGlow.style.top = '-10px';
+            
+            // Add actual moon image
+            const moonImage = document.createElement('img');
+            moonImage.src = 'moon.png';
+            moonImage.style.width = '100px';
+            moonImage.style.height = '100px';
+            moonImage.style.borderRadius = '50%';
+            moonImage.style.position = 'relative';
+            moonImage.style.zIndex = '6';
+            moonImage.style.opacity = '0.85';
+            moonImage.style.filter = 'drop-shadow(0 0 20px rgba(100, 150, 200, 0.5))';
+            
+            moonContainer.appendChild(moonGlow);
+            moonContainer.appendChild(moonImage);
+            constellationPhase.appendChild(moonContainer);
+        }
+        
+        // Update background gradient based on personality
+        function updateBackgroundGradient(personality) {
+            const socialOrientation = personality.social_orientation || 'ambivert';
+            const connectionStyle = personality.connection_style || 'family-centered';
+            const lifeApproach = personality.life_approach || 'stability-seeking';
+            
+            let gradientStops;
+            
+            // Base gradient on personality combination
+            if (socialOrientation === 'introvert') {
+                if (connectionStyle === 'family-centered') {
+                    gradientStops = ['#1e1b4b', '#4c1d95', '#1f1f23']; // warm deep purples
+                } else {
+                    gradientStops = ['#0f172a', '#1e293b', '#000000']; // classic deep blues
+                }
+            } else if (socialOrientation === 'extrovert') {
+                if (lifeApproach === 'adventure-seeking') {
+                    gradientStops = ['#0c4a6e', '#1e40af', '#1f2937']; // dynamic blues
+                } else {
+                    gradientStops = ['#155e75', '#0369a1', '#1f2937']; // social blues
+                }
+            } else { // ambivert
+                gradientStops = ['#0f172a', '#312e81', '#000000']; // balanced original
+            }
+            
+            constellationPhase.style.background = `linear-gradient(to bottom, ${gradientStops[0]}, ${gradientStops[1]}, ${gradientStops[2]})`;
+        }
+
+        // Event listeners
+        generateButton.addEventListener('click', handleGeneration);
+        revealStoryButton.addEventListener('click', revealConstellationStory);
+        downloadButton.addEventListener('click', downloadConstellation);
+        newStoryButton.addEventListener('click', startOver);
+        showDebugButton.addEventListener('click', toggleDebugPanel);
+        viewCollection.addEventListener('click', showPermanentCollection);
+        
+        // Message star event listeners
+        toggleMessageMode.addEventListener('click', enterMessageMode);
+        exitMessageMode.addEventListener('click', exitMessageModeHandler);
+        testFallingStar.addEventListener('click', () => {
+            if (messageStars.length > 0) {
+                triggerRandomFallingStar();
+            }
+        });
+        cancelMessageStar.addEventListener('click', cancelMessageStarCreation);
+        saveMessageStar.addEventListener('click', saveMessageStarHandler);
+        closeFallingMessage.addEventListener('click', closeFallingMessageHandler);
+        saveToCollection.addEventListener('click', saveToCollectionHandler);
+        sendBackToStars.addEventListener('click', sendBackToStarsHandler);
+        closePermanentCollection.addEventListener('click', () => {
+            permanentCollectionPanel.classList.add('hidden');
+        });
+        
+        // Canvas click for message stars
+        starCanvas.addEventListener('click', handleCanvasClick);
+
+        // Main generation handler
+        async function handleGeneration() {
+            const transcript = transcriptInput.value.trim();
+            if (!transcript) {
+                showError("Please enter a life story to analyze.");
+                return;
+            }
+
+            hideError();
+            loading.classList.remove('hidden');
+            generateButton.disabled = true;
+            generateButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                // Step 1: Analyze biographical text
+                const prompt = createBiographicalPrompt(transcript);
+                const responseText = await callGeminiAPI(prompt);
+                const biographicalData = JSON.parse(responseText);
+                
+                // Step 2: Extract memories for constellation
+                const memoryPrompt = createMemoryExtractionPrompt(transcript, biographicalData);
+                const memoryResponseText = await callGeminiAPI(memoryPrompt);
+                const memoryData = JSON.parse(memoryResponseText);
+                
+                // Step 3: Create constellation visualization
+                currentBiographicalData = biographicalData;
+                currentMemories = memoryData.memories;
+                
+                await transitionToConstellation();
+                
+            } catch (err) {
+                console.error("Error during generation:", err);
+                showError("Sorry, an error occurred while analyzing the story. Please check the console for details or try again.");
+            } finally {
+                loading.classList.add('hidden');
+                generateButton.disabled = false;
+                generateButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Create biographical analysis prompt
+        function createBiographicalPrompt(transcript) {
+            return `You are an expert genealogical analyst, narrative historian, and compassionate biographer. Your task is to analyze the following biographical text and create a deeply personalized 'Constellation Memory' that captures this person's unique life pattern and personality.
+
+Analyze the following text:
+---
+${transcript}
+---
+
+Perform the following comprehensive analyses and structure your response as a single, valid JSON object. Do not include any text before or after the JSON object.
+
+1. **Timeline**: Extract key life events with dates (birth, death, marriage, graduation, moves, career changes) and arrange them chronologically.
+
+2. **Personality Pattern Analysis**: Based on the text, determine:
+   - **Social Orientation**: "introvert" (focused inward, close relationships), "extrovert" (outward-facing, many connections), or "ambivert" (balanced)
+   - **Life Approach**: "stability-seeking" (consistent, rooted), "adventure-seeking" (change, exploration), or "growth-seeking" (learning, development)
+   - **Connection Style**: "family-centered" (close family bonds primary), "community-focused" (broader social connections), "individual-focused" (personal achievements), or "service-oriented" (helping others)
+
+3. **Life Journey Shape**: Analyze the overall pattern of this person's life:
+   - **"linear"**: Clear progression in one direction (career advancement, geographic movement)
+   - **"circular"**: Life revolved around central themes/places (returned home, centered on family/community)  
+   - **"hub"**: Person was central point connecting others (teacher, leader, caregiver, community connector)
+   - **"branching"**: Life had multiple distinct paths/phases (career changes, diverse interests)
+   - **"clustered"**: Life had several distinct, separate phases or communities
+
+4. **Relationship Mapping**: Identify the types and patterns of relationships:
+   - Primary relationship clusters (immediate family, extended family, friends, colleagues, community)
+   - Relationship roles they played (nurturer, leader, supporter, bridge-builder, mentor)
+   - Geographic spread of relationships (local, regional, widespread)
+
+5. **Key Themes**: 3-5 dominant life themes with specificity to this person.
+
+6. **Pivotal Insights**: 2-3 turning points that reveal character and shaped the life pattern.
+
+7. **Constellation Story**: Create a unique metaphor and narrative that reflects their specific personality pattern and life journey shape.
+
+Your final output MUST be a single, valid JSON object with the following structure:
+{
+  "timeline": [{"date": "YYYY-MM-DD or YYYY", "event": "Description"}],
+  "personality": {
+    "social_orientation": "introvert|extrovert|ambivert",
+    "life_approach": "stability-seeking|adventure-seeking|growth-seeking", 
+    "connection_style": "family-centered|community-focused|individual-focused|service-oriented"
+  },
+  "life_journey_shape": "linear|circular|hub|branching|clustered",
+  "relationship_mapping": {
+    "primary_clusters": ["cluster1", "cluster2"],
+    "roles_played": ["role1", "role2"], 
+    "geographic_spread": "local|regional|widespread"
+  },
+  "themes": ["Theme 1", "Theme 2"],
+  "insights": [{"title": "Title", "explanation": "Why this reveals character"}],
+  "constellation": {
+    "title": "The [Unique Metaphor] Constellation",
+    "narrative": "Personalized narrative reflecting their specific life pattern..."
+  }
+}`;
+        }
+
+        // Create memory extraction prompt for constellation
+        function createMemoryExtractionPrompt(transcript, biographicalData) {
+            return `Based on the personality analysis and life journey shape, extract 5-7 key memories/moments that should become stars in a visual constellation. These memories must reflect this person's unique life pattern and create a constellation shape that matches their journey.
+
+Biographical Text:
+---
+${transcript}
+---
+
+Life Pattern Analysis:
+${JSON.stringify(biographicalData)}
+
+For each memory, provide:
+1. **title**: A short, meaningful title (2-4 words)
+2. **description**: A brief description focusing on relationships and emotional significance
+3. **year**: Approximate year when this occurred
+4. **importance**: Emotional/life significance (1-10)
+5. **theme**: Which life theme this represents
+6. **memory_type**: "family", "achievement", "loss", "friendship", "adventure", "service", "learning", "love"
+7. **relationship_connections**: Array of other memories this connects to (by title or theme)
+8. **emotional_intensity**: How emotionally significant (1-5, affects star size)
+9. **geographic_context**: "home", "away", "community", "workplace" (affects positioning)
+
+CRITICAL: The memories must be positioned to create the detected life journey shape:
+- **Linear lives**: Memories should show clear progression/movement
+- **Circular lives**: Memories should cluster around central themes with returns home
+- **Hub lives**: One central memory with others radiating outward
+- **Branching lives**: Clear distinct phases or paths
+- **Clustered lives**: Separate groups of related memories
+
+Consider personality for memory selection:
+- **Introverts**: Focus on deep, personal moments, close relationships
+- **Extroverts**: Include community involvement, broader social connections
+- **Family-centered**: Emphasize family milestones, gatherings, traditions
+- **Service-oriented**: Highlight moments of helping others, community impact
+
+Return as a single JSON object:
+{
+  "memories": [
+    {
+      "title": "Memory Title", 
+      "description": "What happened and why it shaped them",
+      "year": 1945,
+      "importance": 8,
+      "theme": "Family Bonds",
+      "memory_type": "family",
+      "relationship_connections": ["Other Memory Title"],
+      "emotional_intensity": 4,
+      "geographic_context": "home"
+    }
+  ],
+  "constellation_pattern_notes": "Brief explanation of how these memories create the detected life journey shape"
+}`;
+        }
+
+        // Call Gemini API
+        async function callGeminiAPI(prompt) {
+            const apiKey = "AIzaSyC-S5dlLl2TJqEnEvdEa1CKcSBzX8zzXy0";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                }
+            };
+
+            let attempts = 0;
+            const maxAttempts = 5;
+            let delay = 1000;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else {
+                            throw new Error('Invalid API response structure');
+                        }
+                    } else if (response.status === 429 || response.status >= 500) {
+                        attempts++;
+                        if (attempts >= maxAttempts) {
+                           throw new Error(`API request failed after ${maxAttempts} attempts with status: ${response.status}`);
+                        }
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else {
+                        const errorBody = await response.text();
+                        throw new Error(`API request failed with status: ${response.status}. Body: ${errorBody}`);
+                    }
+                } catch (error) {
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                        throw error;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // Transition to constellation view
+        async function transitionToConstellation() {
+            inputPhase.classList.add('hidden');
+            constellationPhase.classList.remove('hidden');
+            
+            initializeBackgroundStars();
+            
+            // Set constellation title
+            if (currentBiographicalData && currentBiographicalData.constellation) {
+                constellationTitle.textContent = currentBiographicalData.constellation.title;
+            }
+            
+            // Position and create memory stars
+            positionMemoryStars();
+            
+            // Display any saved message stars
+            displayMessageStars();
+        }
+
+        // Position memory stars based on detected life journey pattern
+        function positionMemoryStars() {
+            const canvas = starCanvas.getBoundingClientRect();
+            const margin = 80;
+            const width = canvas.width - 2 * margin;
+            const height = canvas.height - 2 * margin;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Define moon area to avoid (bottom right)
+            const moonArea = {
+                x: canvas.width * 0.75,
+                y: canvas.height * 0.65,
+                radius: 120
+            };
+            
+            // Clear existing stars
+            memoryStars.innerHTML = '';
+            
+            // Position based on life journey shape
+            const journeyShape = currentBiographicalData?.life_journey_shape || 'circular';
+            const personality = currentBiographicalData?.personality || {};
+            
+            let positions = [];
+            
+            switch (journeyShape) {
+                case 'linear':
+                    positions = calculateLinearPositions();
+                    break;
+                case 'circular':
+                    positions = calculateCircularPositions();
+                    break;
+                case 'hub':
+                    positions = calculateHubPositions();
+                    break;
+                case 'branching':
+                    positions = calculateBranchingPositions();
+                    break;
+                case 'clustered':
+                    positions = calculateClusteredPositions();
+                    break;
+                default:
+                    positions = calculateCircularPositions();
+            }
+            
+            currentMemories.forEach((memory, index) => {
+                let position = positions[index] || { x: centerX, y: centerY };
+                
+                // Adjust position if it conflicts with moon area
+                position = adjustPositionForMoon(position, moonArea);
+                
+                // Create star element with personality-based styling
+                const star = document.createElement('div');
+                star.className = 'memory-star';
+                
+                // Apply memory type colors and sizes
+                applyMemoryTypeStyle(star, memory);
+                
+                star.style.left = position.x + 'px';
+                star.style.top = position.y + 'px';
+                star.dataset.index = index;
+                
+                // Add hover events for tooltip
+                star.addEventListener('mouseenter', (e) => showTooltip(e, memory));
+                star.addEventListener('mouseleave', hideTooltip);
+                star.addEventListener('mousemove', (e) => updateTooltipPosition(e));
+                
+                memoryStars.appendChild(star);
+                
+                // Store position for constellation lines
+                memory.x = position.x;
+                memory.y = position.y;
+            });
+            
+            // Draw constellation lines after a brief delay
+            setTimeout(drawConstellationLines, 500);
+            
+            function calculateLinearPositions() {
+                // Sort memories by year for linear progression
+                const sortedMemories = [...currentMemories].sort((a, b) => a.year - b.year);
+                const positions = [];
+                
+                // Create a path that shows progression
+                sortedMemories.forEach((memory, index) => {
+                    const progress = index / (sortedMemories.length - 1 || 1);
+                    
+                    // Linear path with slight curve based on importance
+                    const baseX = margin + width * progress;
+                    const importance = (memory.importance - 1) / 9;
+                    const curveOffset = (importance - 0.5) * 100; // Curve based on importance
+                    
+                    positions[currentMemories.indexOf(memory)] = {
+                        x: baseX,
+                        y: centerY + curveOffset
+                    };
+                });
+                
+                return positions;
+            }
+            
+            function calculateCircularPositions() {
+                // Create circular arrangement with family/home memories at center
+                const positions = [];
+                const radius = Math.min(width, height) * 0.3;
+                
+                // Find central memory (usually family or home-related)
+                let centralMemory = currentMemories.find(m => 
+                    m.memory_type === 'family' || m.geographic_context === 'home'
+                ) || currentMemories[0];
+                
+                const centralIndex = currentMemories.indexOf(centralMemory);
+                positions[centralIndex] = { x: centerX, y: centerY };
+                
+                // Arrange others in circle
+                const otherMemories = currentMemories.filter((_, i) => i !== centralIndex);
+                otherMemories.forEach((memory, index) => {
+                    const angle = (index / otherMemories.length) * 2 * Math.PI;
+                    const memoryRadius = radius * (0.8 + (memory.importance / 10) * 0.4);
+                    
+                    const originalIndex = currentMemories.indexOf(memory);
+                    positions[originalIndex] = {
+                        x: centerX + Math.cos(angle) * memoryRadius,
+                        y: centerY + Math.sin(angle) * memoryRadius
+                    };
+                });
+                
+                return positions;
+            }
+            
+            function calculateHubPositions() {
+                // One central memory with others radiating outward
+                const positions = [];
+                
+                // Find hub memory (highest importance or service-related)
+                let hubMemory = currentMemories.reduce((prev, curr) => 
+                    curr.importance > prev.importance ? curr : prev
+                );
+                
+                const hubIndex = currentMemories.indexOf(hubMemory);
+                positions[hubIndex] = { x: centerX, y: centerY };
+                
+                // Radiate others outward
+                const otherMemories = currentMemories.filter((_, i) => i !== hubIndex);
+                otherMemories.forEach((memory, index) => {
+                    const angle = (index / otherMemories.length) * 2 * Math.PI;
+                    const distance = 120 + (memory.emotional_intensity || 3) * 30;
+                    
+                    const originalIndex = currentMemories.indexOf(memory);
+                    positions[originalIndex] = {
+                        x: centerX + Math.cos(angle) * distance,
+                        y: centerY + Math.sin(angle) * distance
+                    };
+                });
+                
+                return positions;
+            }
+            
+            function calculateBranchingPositions() {
+                // Group memories by theme/type and create branches
+                const themeGroups = {};
+                currentMemories.forEach(memory => {
+                    const key = memory.theme || memory.memory_type || 'misc';
+                    if (!themeGroups[key]) themeGroups[key] = [];
+                    themeGroups[key].push(memory);
+                });
+                
+                const positions = [];
+                const branches = Object.values(themeGroups);
+                const branchCount = branches.length;
+                
+                branches.forEach((branch, branchIndex) => {
+                    const branchAngle = (branchIndex / branchCount) * 2 * Math.PI;
+                    const branchBaseX = centerX + Math.cos(branchAngle) * 80;
+                    const branchBaseY = centerY + Math.sin(branchAngle) * 80;
+                    
+                    branch.forEach((memory, memIndex) => {
+                        const distance = 60 + memIndex * 40;
+                        const x = branchBaseX + Math.cos(branchAngle) * distance;
+                        const y = branchBaseY + Math.sin(branchAngle) * distance;
+                        
+                        const originalIndex = currentMemories.indexOf(memory);
+                        positions[originalIndex] = { x, y };
+                    });
+                });
+                
+                return positions;
+            }
+            
+            function calculateClusteredPositions() {
+                // Create distinct clusters based on life phases or themes
+                const clusters = [];
+                const years = currentMemories.map(m => m.year);
+                const minYear = Math.min(...years);
+                const maxYear = Math.max(...years);
+                const yearRange = maxYear - minYear || 1;
+                
+                // Group by life phases (every ~20 years)
+                currentMemories.forEach(memory => {
+                    const phase = Math.floor(((memory.year - minYear) / yearRange) * 3);
+                    if (!clusters[phase]) clusters[phase] = [];
+                    clusters[phase].push(memory);
+                });
+                
+                const positions = [];
+                clusters.forEach((cluster, clusterIndex) => {
+                    if (!cluster) return;
+                    
+                    const clusterCenterX = margin + (width / clusters.length) * (clusterIndex + 0.5);
+                    const clusterCenterY = centerY + (clusterIndex % 2 === 0 ? -80 : 80);
+                    
+                    cluster.forEach((memory, memIndex) => {
+                        const angle = (memIndex / cluster.length) * 2 * Math.PI;
+                        const radius = 40 + (memory.emotional_intensity || 3) * 10;
+                        
+                        const originalIndex = currentMemories.indexOf(memory);
+                        positions[originalIndex] = {
+                            x: clusterCenterX + Math.cos(angle) * radius,
+                            y: clusterCenterY + Math.sin(angle) * radius
+                        };
+                    });
+                });
+                
+                return positions;
+            }
+        }
+        
+        // Helper function to adjust star position if it conflicts with moon
+        function adjustPositionForMoon(position, moonArea) {
+            const distance = Math.sqrt(
+                Math.pow(position.x - moonArea.x, 2) + 
+                Math.pow(position.y - moonArea.y, 2)
+            );
+            
+            if (distance < moonArea.radius) {
+                // Move star away from moon
+                const angle = Math.atan2(position.y - moonArea.y, position.x - moonArea.x);
+                const newDistance = moonArea.radius + 30; // Add some padding
+                
+                return {
+                    x: moonArea.x + Math.cos(angle) * newDistance,
+                    y: moonArea.y + Math.sin(angle) * newDistance
+                };
+            }
+            
+            return position;
+        }
+        
+        // Apply visual styling based on memory type and emotional intensity
+        function applyMemoryTypeStyle(starElement, memory) {
+            const baseSize = 8 + (memory.emotional_intensity || 3) * 2; // 8-18px
+            
+            // Color scheme based on memory type
+            const colors = {
+                family: { primary: '#fbbf24', secondary: '#f59e0b' }, // warm gold
+                achievement: { primary: '#60a5fa', secondary: '#3b82f6' }, // cool blue  
+                loss: { primary: '#c084fc', secondary: '#a855f7' }, // soft purple
+                friendship: { primary: '#34d399', secondary: '#10b981' }, // gentle green
+                adventure: { primary: '#ffffff', secondary: '#e5e7eb' }, // bright white
+                service: { primary: '#fb7185', secondary: '#e11d48' }, // warm pink
+                learning: { primary: '#fbbf24', secondary: '#d97706' }, // orange-gold
+                love: { primary: '#f87171', secondary: '#dc2626' } // warm red
+            };
+            
+            const colorScheme = colors[memory.memory_type] || colors.family;
+            
+            starElement.style.width = baseSize + 'px';
+            starElement.style.height = baseSize + 'px';
+            starElement.style.background = `radial-gradient(circle, ${colorScheme.primary} 0%, ${colorScheme.secondary} 100%)`;
+            starElement.style.boxShadow = `0 0 ${baseSize + 5}px rgba(251, 191, 36, 0.6), 0 0 ${baseSize * 2}px rgba(251, 191, 36, 0.3)`;
+        }
+
+        // Draw constellation lines between memory stars
+        function drawConstellationLines() {
+            const svg = constellationSvg;
+            svg.innerHTML = '';
+            
+            // Calculate connections using a modified MST approach
+            const connections = calculateMemoryConnections(currentMemories);
+            
+            // Animate line drawing
+            let delay = 0;
+            connections.forEach((connection, index) => {
+                setTimeout(() => {
+                    drawAnimatedLine(svg, connection, index);
+                }, delay);
+                delay += 200;
+            });
+        }
+
+        // Calculate meaningful connections between memories based on relationships and patterns
+        function calculateMemoryConnections(memories) {
+            if (memories.length < 2) return [];
+            
+            const connections = [];
+            const journeyShape = currentBiographicalData?.life_journey_shape || 'circular';
+            
+            // 1. Relationship-based connections (from AI analysis)
+            memories.forEach((memory, index) => {
+                if (memory.relationship_connections && memory.relationship_connections.length > 0) {
+                    memory.relationship_connections.forEach(connectionTitle => {
+                        const targetMemory = memories.find(m => 
+                            m.title === connectionTitle || m.theme === connectionTitle
+                        );
+                        if (targetMemory && targetMemory !== memory) {
+                            connections.push(createConnection(memory, targetMemory, 'relationship', 2));
+                        }
+                    });
+                }
+            });
+            
+            // 2. Pattern-specific connections based on life journey shape
+            switch (journeyShape) {
+                case 'linear':
+                    addLinearConnections();
+                    break;
+                case 'circular':
+                    addCircularConnections();
+                    break;
+                case 'hub':
+                    addHubConnections();
+                    break;
+                case 'branching':
+                    addBranchingConnections();
+                    break;
+                case 'clustered':
+                    addClusteredConnections();
+                    break;
+            }
+            
+            // 3. Emotional intensity connections (stronger bonds)
+            const highIntensityMemories = memories.filter(m => (m.emotional_intensity || 3) >= 4);
+            if (highIntensityMemories.length > 1) {
+                for (let i = 0; i < highIntensityMemories.length - 1; i++) {
+                    for (let j = i + 1; j < highIntensityMemories.length; j++) {
+                        const distance = getDistance(highIntensityMemories[i], highIntensityMemories[j]);
+                        if (distance < 250) { // Only connect if reasonably close
+                            connections.push(createConnection(
+                                highIntensityMemories[i], 
+                                highIntensityMemories[j], 
+                                'emotional', 
+                                3
+                            ));
+                        }
+                    }
+                }
+            }
+            
+            return connections;
+            
+            function addLinearConnections() {
+                // Connect in chronological order with some branching
+                const sortedByYear = [...memories].sort((a, b) => a.year - b.year);
+                
+                // Main chronological spine
+                for (let i = 0; i < sortedByYear.length - 1; i++) {
+                    connections.push(createConnection(sortedByYear[i], sortedByYear[i + 1], 'chronological', 1.5));
+                }
+                
+                // Add causal connections (achievements leading to other achievements)
+                const achievements = memories.filter(m => m.memory_type === 'achievement');
+                achievements.forEach((achievement, index) => {
+                    if (index > 0) {
+                        connections.push(createConnection(achievements[index - 1], achievement, 'causal', 2));
+                    }
+                });
+            }
+            
+            function addCircularConnections() {
+                // Find center memory and connect all to it, then create circular connections
+                const centerMemory = memories.find(m => 
+                    m.memory_type === 'family' || m.geographic_context === 'home'
+                ) || memories[0];
+                
+                // Spoke connections to center
+                memories.forEach(memory => {
+                    if (memory !== centerMemory) {
+                        connections.push(createConnection(centerMemory, memory, 'central', 1));
+                    }
+                });
+                
+                // Circular connections between outer memories
+                const outerMemories = memories.filter(m => m !== centerMemory);
+                for (let i = 0; i < outerMemories.length; i++) {
+                    const next = outerMemories[(i + 1) % outerMemories.length];
+                    const distance = getDistance(outerMemories[i], next);
+                    if (distance < 200) {
+                        connections.push(createConnection(outerMemories[i], next, 'circular', 1));
+                    }
+                }
+            }
+            
+            function addHubConnections() {
+                // Find hub memory (highest importance) and radiate from it
+                const hubMemory = memories.reduce((prev, curr) => 
+                    curr.importance > prev.importance ? curr : prev
+                );
+                
+                // Connect all memories to hub
+                memories.forEach(memory => {
+                    if (memory !== hubMemory) {
+                        connections.push(createConnection(hubMemory, memory, 'radial', 2));
+                    }
+                });
+                
+                // Connect memories of same type
+                const typeGroups = {};
+                memories.forEach(memory => {
+                    if (!typeGroups[memory.memory_type]) typeGroups[memory.memory_type] = [];
+                    typeGroups[memory.memory_type].push(memory);
+                });
+                
+                Object.values(typeGroups).forEach(group => {
+                    if (group.length > 1) {
+                        for (let i = 0; i < group.length - 1; i++) {
+                            connections.push(createConnection(group[i], group[i + 1], 'thematic', 1));
+                        }
+                    }
+                });
+            }
+            
+            function addBranchingConnections() {
+                // Connect within branches (themes/types) and create trunk connections
+                const themeGroups = {};
+                memories.forEach(memory => {
+                    const key = memory.theme || memory.memory_type || 'misc';
+                    if (!themeGroups[key]) themeGroups[key] = [];
+                    themeGroups[key].push(memory);
+                });
+                
+                // Connect within each branch
+                Object.values(themeGroups).forEach(branch => {
+                    branch.sort((a, b) => a.year - b.year);
+                    for (let i = 0; i < branch.length - 1; i++) {
+                        connections.push(createConnection(branch[i], branch[i + 1], 'branch', 2));
+                    }
+                });
+                
+                // Connect branch roots (earliest memory in each branch)
+                const branchRoots = Object.values(themeGroups).map(branch => 
+                    branch.reduce((earliest, current) => 
+                        current.year < earliest.year ? current : earliest
+                    )
+                );
+                
+                for (let i = 0; i < branchRoots.length - 1; i++) {
+                    connections.push(createConnection(branchRoots[i], branchRoots[i + 1], 'trunk', 1.5));
+                }
+            }
+            
+            function addClusteredConnections() {
+                // Group by life phases and connect within clusters
+                const years = memories.map(m => m.year);
+                const minYear = Math.min(...years);
+                const maxYear = Math.max(...years);
+                const yearRange = maxYear - minYear || 1;
+                
+                const clusters = [];
+                memories.forEach(memory => {
+                    const phase = Math.floor(((memory.year - minYear) / yearRange) * 3);
+                    if (!clusters[phase]) clusters[phase] = [];
+                    clusters[phase].push(memory);
+                });
+                
+                // Connect within each cluster
+                clusters.forEach(cluster => {
+                    if (!cluster || cluster.length < 2) return;
+                    
+                    // Create internal cluster connections
+                    for (let i = 0; i < cluster.length; i++) {
+                        for (let j = i + 1; j < cluster.length; j++) {
+                            const distance = getDistance(cluster[i], cluster[j]);
+                            if (distance < 150) {
+                                connections.push(createConnection(cluster[i], cluster[j], 'cluster', 1));
+                            }
+                        }
+                    }
+                });
+                
+                // Bridge connections between clusters
+                for (let i = 0; i < clusters.length - 1; i++) {
+                    if (clusters[i] && clusters[i + 1]) {
+                        const bridgeStart = clusters[i][clusters[i].length - 1]; // Latest in current cluster
+                        const bridgeEnd = clusters[i + 1][0]; // Earliest in next cluster
+                        connections.push(createConnection(bridgeStart, bridgeEnd, 'bridge', 2));
+                    }
+                }
+            }
+            
+            function createConnection(memory1, memory2, type, strokeWidth) {
+                return {
+                    x1: memory1.x,
+                    y1: memory1.y,
+                    x2: memory2.x,
+                    y2: memory2.y,
+                    type: type,
+                    strokeWidth: strokeWidth,
+                    opacity: getConnectionOpacity(type)
+                };
+            }
+            
+            function getConnectionOpacity(type) {
+                const opacities = {
+                    'relationship': 0.8,
+                    'emotional': 0.9,
+                    'chronological': 0.6,
+                    'causal': 0.7,
+                    'central': 0.5,
+                    'circular': 0.4,
+                    'radial': 0.6,
+                    'thematic': 0.5,
+                    'branch': 0.7,
+                    'trunk': 0.8,
+                    'cluster': 0.5,
+                    'bridge': 0.6
+                };
+                return opacities[type] || 0.5;
+            }
+            
+            function getDistance(memory1, memory2) {
+                return Math.sqrt(
+                    Math.pow(memory1.x - memory2.x, 2) + 
+                    Math.pow(memory1.y - memory2.y, 2)
+                );
+            }
+        }
+
+        // Draw animated constellation line with connection-specific styling
+        function drawAnimatedLine(svg, connection, id) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('class', 'constellation-line');
+            line.setAttribute('x1', connection.x1);
+            line.setAttribute('y1', connection.y1);
+            line.setAttribute('x2', connection.x1);
+            line.setAttribute('y2', connection.y1);
+            line.dataset.id = id;
+            
+            // Apply connection-specific styling
+            line.setAttribute('stroke', getConnectionColor(connection.type));
+            line.setAttribute('stroke-width', connection.strokeWidth || 1.5);
+            line.setAttribute('opacity', connection.opacity || 0.6);
+            line.setAttribute('stroke-linecap', 'round');
+            
+            // Add connection-specific effects
+            if (connection.type === 'emotional') {
+                line.setAttribute('filter', 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.5))');
+            } else if (connection.type === 'relationship') {
+                line.setAttribute('stroke-dasharray', '5,3');
+            }
+            
+            svg.appendChild(line);
+            
+            // Animate line drawing with type-specific timing
+            const startTime = Date.now();
+            const duration = getAnimationDuration(connection.type);
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX2 = connection.x1 + (connection.x2 - connection.x1) * progress;
+                const currentY2 = connection.y1 + (connection.y2 - connection.y1) * progress;
+                
+                line.setAttribute('x2', currentX2);
+                line.setAttribute('y2', currentY2);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Get color based on connection type
+        function getConnectionColor(type) {
+            const colors = {
+                'relationship': 'rgba(251, 191, 36, 0.8)',    // warm gold
+                'emotional': 'rgba(248, 113, 113, 0.9)',      // warm red
+                'chronological': 'rgba(200, 200, 255, 0.6)',  // cool blue
+                'causal': 'rgba(96, 165, 250, 0.7)',          // bright blue
+                'central': 'rgba(200, 200, 255, 0.5)',        // soft blue
+                'circular': 'rgba(192, 132, 252, 0.4)',       // soft purple
+                'radial': 'rgba(251, 191, 36, 0.6)',          // gold
+                'thematic': 'rgba(52, 211, 153, 0.5)',        // green
+                'branch': 'rgba(96, 165, 250, 0.7)',          // blue
+                'trunk': 'rgba(168, 85, 247, 0.8)',           // purple
+                'cluster': 'rgba(200, 200, 255, 0.5)',        // light blue
+                'bridge': 'rgba(251, 191, 36, 0.6)'           // gold
+            };
+            return colors[type] || 'rgba(200, 200, 255, 0.5)';
+        }
+        
+        // Get animation duration based on connection type
+        function getAnimationDuration(type) {
+            const durations = {
+                'relationship': 400,   // slower for important connections
+                'emotional': 500,      // slowest for emotional bonds
+                'chronological': 250,  // fast for timeline
+                'causal': 300,         // medium for cause-effect
+                'central': 200,        // quick for center spokes
+                'circular': 350,       // medium for circular flow
+                'radial': 250,         // quick for radiating
+                'thematic': 300,       // medium for themes
+                'branch': 350,         // medium for branches
+                'trunk': 400,          // slower for main trunk
+                'cluster': 200,        // quick within clusters
+                'bridge': 450          // slow for important bridges
+            };
+            return durations[type] || 300;
+        }
+
+        // Tooltip functions
+        function showTooltip(e, memory) {
+            memoryTooltip.innerHTML = `
+                <strong>${memory.title}</strong><br>
+                <small>${memory.year} • ${memory.theme}</small><br>
+                ${memory.description}
+            `;
+            memoryTooltip.style.opacity = '1';
+            updateTooltipPosition(e);
+        }
+
+        function hideTooltip() {
+            memoryTooltip.style.opacity = '0';
+        }
+
+        function updateTooltipPosition(e) {
+            const rect = constellationPhase.getBoundingClientRect();
+            memoryTooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+            memoryTooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+        }
+
+        // Reveal constellation story with pattern-specific enhancements
+        function revealConstellationStory() {
+            if (!currentBiographicalData) return;
+            
+            // Generate an enhanced story that incorporates the actual constellation pattern
+            const enhancedStory = generatePatternSpecificStory();
+            
+            storyTitle.textContent = currentBiographicalData.constellation.title;
+            storyNarrative.textContent = enhancedStory;
+            storyPanel.classList.remove('hidden');
+            
+            // Hide after 12 seconds for longer stories
+            setTimeout(() => {
+                storyPanel.classList.add('hidden');
+            }, 12000);
+        }
+        
+        // Generate story that reflects the actual constellation pattern created
+        function generatePatternSpecificStory() {
+            const baseNarrative = currentBiographicalData.constellation.narrative;
+            const journeyShape = currentBiographicalData?.life_journey_shape || 'circular';
+            const personality = currentBiographicalData?.personality || {};
+            const memoryCount = currentMemories.length;
+            
+            // Create pattern-specific additions to the story
+            let patternDescription = '';
+            
+            switch (journeyShape) {
+                case 'linear':
+                    patternDescription = `Like stars aligned along the horizon, these ${memoryCount} memories form a clear path through time. Each star illuminates the next step forward, showing a life of purposeful progression and determined growth.`;
+                    break;
+                case 'circular':
+                    patternDescription = `These ${memoryCount} stars dance in an eternal circle, with the warmth of home and family at their center. Like planets orbiting their sun, each memory returns to what mattered most—the love that anchored everything else.`;
+                    break;
+                case 'hub':
+                    patternDescription = `At the heart of this constellation burns a brilliant central star, with ${memoryCount - 1} other lights radiating outward like rays of influence. This was a life that became a beacon for others, connecting and illuminating countless paths.`;
+                    break;
+                case 'branching':
+                    const branchCount = Math.ceil(memoryCount / 2);
+                    patternDescription = `Like a tree of light against the night sky, this constellation spreads into ${branchCount} distinct branches. Each represents a different chapter, a new direction chosen—showing a life rich in exploration and diverse experiences.`;
+                    break;
+                case 'clustered':
+                    const clusterCount = Math.min(3, Math.ceil(memoryCount / 2));
+                    patternDescription = `The stars gather in ${clusterCount} distinct clusters, each representing a different season of life. Like islands of memory connected by invisible bonds, they show how experiences grouped together, creating chapters of meaning.`;
+                    break;
+            }
+            
+            // Add personality-specific elements
+            let personalityTouch = '';
+            if (personality.social_orientation === 'introvert') {
+                personalityTouch = ' In the gentle quietude between the stars, we see a soul who found profound meaning in deep connections and thoughtful moments.';
+            } else if (personality.social_orientation === 'extrovert') {
+                personalityTouch = ' The constellation sparkles with extra brightness, reflecting a spirit that lit up every room and drew others into its warm embrace.';
+            } else {
+                personalityTouch = ' The balanced arrangement of these stars mirrors a life lived with both reflection and connection, solitude and community.';
+            }
+            
+            // Combine base narrative with pattern-specific description
+            return `${baseNarrative}\n\n${patternDescription}${personalityTouch}`;
+        }
+
+        // Download constellation as image with personality-based styling
+        function downloadConstellation() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 1920;
+            canvas.height = 1080;
+            
+            const personality = currentBiographicalData?.personality || {};
+            const socialOrientation = personality.social_orientation || 'ambivert';
+            
+            // Draw personality-based background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            if (socialOrientation === 'introvert') {
+                gradient.addColorStop(0, '#1e1b4b');
+                gradient.addColorStop(0.5, '#4c1d95');
+                gradient.addColorStop(1, '#1f1f23');
+            } else if (socialOrientation === 'extrovert') {
+                gradient.addColorStop(0, '#0c4a6e');
+                gradient.addColorStop(0.5, '#1e40af');
+                gradient.addColorStop(1, '#1f2937');
+            } else {
+                gradient.addColorStop(0, '#0f172a');
+                gradient.addColorStop(0.5, '#312e81');
+                gradient.addColorStop(1, '#000000');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw personality-based background stars
+            const starCount = socialOrientation === 'introvert' ? 80 : 
+                             socialOrientation === 'extrovert' ? 200 : 130;
+            const brightness = socialOrientation === 'introvert' ? 0.4 : 
+                              socialOrientation === 'extrovert' ? 0.6 : 0.5;
+            
+            ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+            for (let i = 0; i < starCount; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 2 + 0.5;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw constellation lines with connection-specific colors
+            const connections = calculateMemoryConnections(currentMemories);
+            connections.forEach(connection => {
+                ctx.strokeStyle = getConnectionColor(connection.type);
+                ctx.lineWidth = connection.strokeWidth || 2;
+                ctx.globalAlpha = connection.opacity || 0.6;
+                
+                ctx.beginPath();
+                ctx.moveTo(connection.x1, connection.y1);
+                ctx.lineTo(connection.x2, connection.y2);
+                ctx.stroke();
+            });
+            ctx.globalAlpha = 1; // Reset alpha
+            
+            // Draw memory stars with type-based colors and sizes
+            currentMemories.forEach(memory => {
+                const baseSize = 6 + (memory.emotional_intensity || 3) * 2;
+                
+                // Use memory type colors
+                const colors = {
+                    family: { primary: '#fbbf24', secondary: '#f59e0b' },
+                    achievement: { primary: '#60a5fa', secondary: '#3b82f6' },
+                    loss: { primary: '#c084fc', secondary: '#a855f7' },
+                    friendship: { primary: '#34d399', secondary: '#10b981' },
+                    adventure: { primary: '#ffffff', secondary: '#e5e7eb' },
+                    service: { primary: '#fb7185', secondary: '#e11d48' },
+                    learning: { primary: '#fbbf24', secondary: '#d97706' },
+                    love: { primary: '#f87171', secondary: '#dc2626' }
+                };
+                
+                const colorScheme = colors[memory.memory_type] || colors.family;
+                const gradient = ctx.createRadialGradient(memory.x, memory.y, 0, memory.x, memory.y, baseSize);
+                gradient.addColorStop(0, colorScheme.primary);
+                gradient.addColorStop(1, colorScheme.secondary);
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(memory.x, memory.y, baseSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add memory labels
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Quicksand';
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.strokeText(memory.title, memory.x, memory.y + baseSize + 18);
+                ctx.fillText(memory.title, memory.x, memory.y + baseSize + 18);
+            });
+            
+            // Add title
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 28px Lora';
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.strokeText(currentBiographicalData.constellation.title, canvas.width / 2, 60);
+            ctx.fillText(currentBiographicalData.constellation.title, canvas.width / 2, 60);
+            
+            // Add moon
+            const moonX = canvas.width * 0.85;
+            const moonY = canvas.height * 0.8;
+            const moonSize = 80;
+            
+            // Moon glow
+            const moonGlowGradient = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, moonSize * 1.5);
+            moonGlowGradient.addColorStop(0, 'rgba(200, 230, 255, 0.6)');
+            moonGlowGradient.addColorStop(0.3, 'rgba(100, 150, 200, 0.3)');
+            moonGlowGradient.addColorStop(1, 'rgba(100, 150, 200, 0.1)');
+            
+            ctx.fillStyle = moonGlowGradient;
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonSize * 1.2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Moon body (simulating the moon image with gradients)
+            const moonBodyGradient = ctx.createRadialGradient(moonX - 20, moonY - 20, 0, moonX, moonY, moonSize);
+            moonBodyGradient.addColorStop(0, '#e0f2ff');
+            moonBodyGradient.addColorStop(0.3, '#87ceeb');
+            moonBodyGradient.addColorStop(0.7, '#4682b4');
+            moonBodyGradient.addColorStop(1, '#2f4f4f');
+            
+            ctx.fillStyle = moonBodyGradient;
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Moon craters (darker circles)
+            ctx.fillStyle = 'rgba(47, 79, 79, 0.3)';
+            ctx.beginPath();
+            ctx.arc(moonX - 10, moonY - 8, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(moonX + 8, moonY + 5, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(moonX - 15, moonY + 12, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add subtle personality indicator
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.font = '14px Quicksand';
+            ctx.textAlign = 'right';
+            const personalityLabel = `${socialOrientation} • ${personality.connection_style || 'centered'} • ${personality.life_approach || 'seeking'}`;
+            ctx.fillText(personalityLabel, canvas.width - 20, canvas.height - 20);
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `constellation-memories-${socialOrientation}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Start over
+        function startOver() {
+            constellationPhase.classList.add('hidden');
+            inputPhase.classList.remove('hidden');
+            
+            // Reset state
+            currentMemories = [];
+            currentBiographicalData = null;
+            storyPanel.classList.add('hidden');
+            debugPanel.classList.add('hidden');
+        }
+        
+        // Toggle debug panel
+        function toggleDebugPanel() {
+            if (debugPanel.classList.contains('hidden')) {
+                showDebugInfo();
+                debugPanel.classList.remove('hidden');
+            } else {
+                debugPanel.classList.add('hidden');
+            }
+        }
+        
+        // Show debug information
+        function showDebugInfo() {
+            if (!currentBiographicalData || !currentMemories.length) {
+                debugContent.innerHTML = '<p class="text-red-300">No constellation data available</p>';
+                return;
+            }
+            
+            const personality = currentBiographicalData.personality || {};
+            const journeyShape = currentBiographicalData.life_journey_shape || 'unknown';
+            
+            debugContent.innerHTML = `
+                <div class="space-y-2">
+                    <div><strong>Journey Shape:</strong> ${journeyShape}</div>
+                    <div><strong>Social:</strong> ${personality.social_orientation || 'unknown'}</div>
+                    <div><strong>Approach:</strong> ${personality.life_approach || 'unknown'}</div>
+                    <div><strong>Connection:</strong> ${personality.connection_style || 'unknown'}</div>
+                    <div><strong>Memories:</strong> ${currentMemories.length} stars</div>
+                    <div><strong>Memory Types:</strong></div>
+                    <div class="ml-4 text-xs">
+                        ${Array.from(new Set(currentMemories.map(m => m.memory_type || 'unknown')))
+                            .map(type => `• ${type}`)
+                            .join('<br>')}
+                    </div>
+                    <div><strong>Background Stars:</strong></div>
+                    <div class="ml-4 text-xs">
+                        Count: ${personality.social_orientation === 'introvert' ? '80 (clustered)' : 
+                                 personality.social_orientation === 'extrovert' ? '200 (scattered)' : '130 (balanced)'}
+                    </div>
+                    <div><strong>Constellation Pattern:</strong></div>
+                    <div class="ml-4 text-xs">
+                        ${getPatternDescription(journeyShape)}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Get pattern description for debug
+        function getPatternDescription(shape) {
+            const descriptions = {
+                'linear': 'Stars arranged in chronological progression with slight curves',
+                'circular': 'Central star (family/home) with others in circular arrangement',
+                'hub': 'Central high-importance star with others radiating outward',
+                'branching': 'Multiple theme-based branches extending from central trunk',
+                'clustered': 'Separate groups representing different life phases'
+            };
+            return descriptions[shape] || 'Unknown pattern';
+        }
+
+        // Utility functions
+        function showError(message) {
+            errorMessage.textContent = message;
+            error.classList.remove('hidden');
+        }
+
+        function hideError() {
+            error.classList.add('hidden');
+        }
+        
+        // =================== MESSAGE STAR FUNCTIONS ===================
+        
+        // Load message stars from localStorage on page load
+        function loadMessageStars() {
+            const saved = localStorage.getItem('constellationMessageStars');
+            const savedCollection = localStorage.getItem('permanentCollection');
+            
+            if (saved) {
+                messageStars = JSON.parse(saved);
+                displayMessageStars();
+                updateMessageCounter();
+                
+                // Start random falling star system if there are stars
+                if (messageStars.length > 0) {
+                    startFallingStarSystem();
+                }
+            }
+            
+            if (savedCollection) {
+                permanentCollection = JSON.parse(savedCollection);
+            }
+        }
+        
+        // Save message stars to localStorage
+        function saveMessageStarsToStorage() {
+            localStorage.setItem('constellationMessageStars', JSON.stringify(messageStars));
+            localStorage.setItem('permanentCollection', JSON.stringify(permanentCollection));
+            updateMessageCounter();
+        }
+        
+        // Enter message creation mode
+        function enterMessageMode() {
+            isMessageMode = true;
+            messageStarInstructions.classList.remove('hidden');
+            toggleMessageMode.innerHTML = '<span style="font-family: \'Quicksand\', sans-serif;" class="font-light">👁️ View Mode</span>';
+            
+            // Hide other UI elements
+            storyPanel.classList.add('hidden');
+            debugPanel.classList.add('hidden');
+        }
+        
+        // Exit message mode
+        function exitMessageModeHandler() {
+            isMessageMode = false;
+            messageStarInstructions.classList.add('hidden');
+            toggleMessageMode.innerHTML = '<span style="font-family: \'Quicksand\', sans-serif;" class="font-light">✨ Add Message Stars</span>';
+        }
+        
+        // Handle canvas clicks for message star creation
+        function handleCanvasClick(e) {
+            if (!isMessageMode) return;
+            
+            const rect = starCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Check if click is in empty space (not near existing stars or moon)
+            if (isEmptySpace(x, y)) {
+                pendingStarPosition = { x, y };
+                showMessageStarModal();
+            }
+        }
+        
+        // Check if clicked area is empty space
+        function isEmptySpace(x, y) {
+            const minDistance = 60; // Minimum distance from other elements
+            
+            // Check distance from existing memory stars
+            for (let memory of currentMemories) {
+                const distance = Math.sqrt(Math.pow(x - memory.x, 2) + Math.pow(y - memory.y, 2));
+                if (distance < minDistance) return false;
+            }
+            
+            // Check distance from existing message stars
+            for (let star of messageStars) {
+                const distance = Math.sqrt(Math.pow(x - star.x, 2) + Math.pow(y - star.y, 2));
+                if (distance < minDistance) return false;
+            }
+            
+            // Check distance from moon
+            const canvas = starCanvas.getBoundingClientRect();
+            const moonX = canvas.width * 0.85;
+            const moonY = canvas.height * 0.8;
+            const moonDistance = Math.sqrt(Math.pow(x - moonX, 2) + Math.pow(y - moonY, 2));
+            if (moonDistance < 100) return false;
+            
+            return true;
+        }
+        
+        // Show message star creation modal
+        function showMessageStarModal() {
+            messageStarModal.classList.remove('hidden');
+            messageStarText.focus();
+        }
+        
+        // Cancel message star creation
+        function cancelMessageStarCreation() {
+            messageStarModal.classList.add('hidden');
+            messageStarText.value = '';
+            pendingStarPosition = null;
+        }
+        
+        // Save new message star
+        function saveMessageStarHandler() {
+            const message = messageStarText.value.trim();
+            if (!message || !pendingStarPosition) return;
+            
+            // Create floating message animation first
+            showFloatingMessage(message, pendingStarPosition);
+            
+            const newStar = {
+                id: Date.now(),
+                x: pendingStarPosition.x,
+                y: pendingStarPosition.y,
+                message: message,
+                created: Date.now(),
+                lastShown: 0 // When it was last shown as a falling star
+            };
+            
+            // Add to stars after animation completes
+            setTimeout(() => {
+                messageStars.push(newStar);
+                saveMessageStarsToStorage();
+                displayMessageStars();
+                
+                // Start falling star system if this is the first star
+                if (messageStars.length === 1) {
+                    startFallingStarSystem();
+                }
+            }, 1000);
+            
+            // Close modal
+            cancelMessageStarCreation();
+        }
+        
+        // Show floating message animation
+        function showFloatingMessage(message, position) {
+            const floatingElement = document.createElement('div');
+            floatingElement.className = 'uploading-message';
+            floatingElement.textContent = `"${message}"`;
+            floatingElement.style.left = position.x + 'px';
+            floatingElement.style.top = position.y + 'px';
+            
+            constellationPhase.appendChild(floatingElement);
+            
+            // Remove after animation
+            setTimeout(() => {
+                floatingElement.remove();
+            }, 3000);
+        }
+        
+        // Display all message stars on canvas
+        function displayMessageStars() {
+            // Remove existing message stars
+            const existingStars = constellationPhase.querySelectorAll('.message-star');
+            existingStars.forEach(star => star.remove());
+            
+            // Add current message stars
+            messageStars.forEach(star => {
+                const starElement = document.createElement('div');
+                starElement.className = 'message-star';
+                starElement.style.left = star.x + 'px';
+                starElement.style.top = star.y + 'px';
+                starElement.dataset.id = star.id;
+                
+                // Add hover tooltip
+                starElement.addEventListener('mouseenter', (e) => {
+                    showMessageStarTooltip(e, star);
+                });
+                starElement.addEventListener('mouseleave', hideTooltip);
+                starElement.addEventListener('mousemove', updateTooltipPosition);
+                
+                constellationPhase.appendChild(starElement);
+            });
+        }
+        
+        // Show tooltip for message star
+        function showMessageStarTooltip(e, star) {
+            memoryTooltip.innerHTML = `
+                <strong>Message Star ⭐</strong><br>
+                <small>Created ${new Date(star.created).toLocaleDateString()}</small><br>
+                <em>Click to reveal the message...</em>
+            `;
+            memoryTooltip.style.opacity = '1';
+            updateTooltipPosition(e);
+        }
+        
+        // Start the random falling star system
+        function startFallingStarSystem() {
+            if (fallingStarInterval) clearInterval(fallingStarInterval);
+            
+            // Check for falling stars every 30 seconds to 5 minutes randomly
+            const scheduleNextFall = () => {
+                const minTime = 30000;  // 30 seconds minimum
+                const maxTime = 300000; // 5 minutes maximum
+                const randomTime = minTime + Math.random() * (maxTime - minTime);
+                
+                setTimeout(() => {
+                    triggerRandomFallingStar();
+                    scheduleNextFall(); // Schedule the next one
+                }, randomTime);
+            };
+            
+            scheduleNextFall();
+        }
+        
+        // Trigger a random falling star
+        function triggerRandomFallingStar() {
+            if (messageStars.length === 0) return;
+            
+            // Get stars that haven't been shown recently (at least 1 hour ago)
+            const now = Date.now();
+            const oneHour = 60 * 60 * 1000;
+            const availableStars = messageStars.filter(star => 
+                now - star.lastShown > oneHour
+            );
+            
+            if (availableStars.length === 0) {
+                // If all stars shown recently, use all stars but prefer older ones
+                const sortedStars = [...messageStars].sort((a, b) => a.lastShown - b.lastShown);
+                const randomStar = sortedStars[0];
+                showFallingStar(randomStar);
+            } else {
+                // Pick random from available
+                const randomStar = availableStars[Math.floor(Math.random() * availableStars.length)];
+                showFallingStar(randomStar);
+            }
+        }
+        
+        // Show falling star animation and message
+        function showFallingStar(star) {
+            // First, make the corresponding message star glow as warning
+            const messageStarElement = document.querySelector(`[data-id="${star.id}"]`);
+            if (messageStarElement) {
+                messageStarElement.classList.add('approaching');
+                
+                // Play gentle chime sound (using Web Audio API)
+                playChimeSound();
+                
+                // Wait 2 seconds with the glow, then trigger falling star
+                setTimeout(() => {
+                    messageStarElement.classList.remove('approaching');
+                    triggerFallingStarAnimation(star);
+                }, 2000);
+            } else {
+                // If no message star found, trigger immediately
+                triggerFallingStarAnimation(star);
+            }
+        }
+        
+        // Trigger the actual falling star animation
+        function triggerFallingStarAnimation(star) {
+            // Create falling star element
+            const fallingStarElement = document.createElement('div');
+            fallingStarElement.className = 'falling-star';
+            
+            // Random starting position at top
+            const startX = Math.random() * 80 + 10; // 10% to 90% across screen
+            fallingStarElement.style.setProperty('--start-x', startX + '%');
+            
+            constellationPhase.appendChild(fallingStarElement);
+            
+            // Show message after star finishes falling (3 seconds)
+            setTimeout(() => {
+                fallingStarElement.remove();
+                showFallingStarMessage(star);
+                
+                // Update last shown time
+                star.lastShown = Date.now();
+                saveMessageStarsToStorage();
+            }, 3000);
+        }
+        
+        // Play gentle chime sound
+        function playChimeSound() {
+            try {
+                // Create a simple, gentle chime using Web Audio API
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create oscillators for a pleasant chime chord
+                const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5 - major chord
+                
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    // Gentle envelope
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 2);
+                    
+                    oscillator.start(audioContext.currentTime + index * 0.1);
+                    oscillator.stop(audioContext.currentTime + 2);
+                });
+            } catch (error) {
+                // Silently fail if audio context not available
+                console.log('Audio not available');
+            }
+        }
+        
+        // Show the falling star message
+        function showFallingStarMessage(star) {
+            currentFallingStar = star;
+            fallingStarMessageText.textContent = star.message;
+            
+            // Format timestamp
+            const createdDate = new Date(star.created);
+            const timeAgo = getTimeAgo(star.created);
+            messageTimestamp.textContent = timeAgo;
+            
+            fallingStarMessage.classList.remove('hidden');
+        }
+        
+        // Get time ago string
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor(diff / (1000 * 60));
+            
+            if (days > 0) {
+                return days === 1 ? 'yesterday' : `${days} days ago`;
+            } else if (hours > 0) {
+                return hours === 1 ? 'an hour ago' : `${hours} hours ago`;
+            } else if (minutes > 0) {
+                return minutes === 1 ? 'a minute ago' : `${minutes} minutes ago`;
+            } else {
+                return 'just now';
+            }
+        }
+        
+        // Update message counter
+        function updateMessageCounter() {
+            if (messageStars.length > 0) {
+                messageCounter.classList.remove('hidden');
+                counterText.textContent = `✨ ${messageStars.length} message${messageStars.length === 1 ? '' : 's'} traveling through time`;
+            } else {
+                messageCounter.classList.add('hidden');
+            }
+        }
+        
+        // Save to permanent collection
+        function saveToCollectionHandler() {
+            if (!currentFallingStar) return;
+            
+            // Add to permanent collection
+            const collectionItem = {
+                id: Date.now(),
+                message: currentFallingStar.message,
+                originalDate: currentFallingStar.created,
+                savedDate: Date.now()
+            };
+            
+            permanentCollection.push(collectionItem);
+            saveMessageStarsToStorage();
+            
+            // Remove from traveling stars
+            messageStars = messageStars.filter(star => star.id !== currentFallingStar.id);
+            saveMessageStarsToStorage();
+            displayMessageStars();
+            
+            // Close message
+            closeFallingMessageHandler();
+            
+            // Show confirmation
+            showNotification("💫 Message saved to Forever Stars collection!");
+        }
+        
+        // Send back to stars
+        function sendBackToStarsHandler() {
+            if (!currentFallingStar) return;
+            
+            // Reset last shown time so it can fall again soon
+            const star = messageStars.find(s => s.id === currentFallingStar.id);
+            if (star) {
+                star.lastShown = 0; // Reset so it can appear again
+                saveMessageStarsToStorage();
+            }
+            
+            // Close message
+            closeFallingMessageHandler();
+            
+            // Show confirmation
+            showNotification("✨ Message sent back to the stars!");
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-purple-500/20 backdrop-blur-md text-white px-6 py-3 rounded-lg border border-purple-300/30 z-50';
+            notification.style.fontFamily = 'Quicksand, sans-serif';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Close falling star message
+        function closeFallingMessageHandler() {
+            fallingStarMessage.classList.add('hidden');
+            currentFallingStar = null;
+        }
+        
+        // Show permanent collection
+        function showPermanentCollection() {
+            if (permanentCollection.length === 0) {
+                showNotification("💫 No messages in Forever Stars collection yet");
+                return;
+            }
+            
+            let content = '';
+            permanentCollection.forEach(item => {
+                const savedDate = new Date(item.savedDate).toLocaleDateString();
+                content += `
+                    <div class="bg-black/20 rounded p-3 mb-2">
+                        <div class="handwriting-message text-sm mb-1" style="font-size: 16px;">"${item.message}"</div>
+                        <div class="text-xs text-white/60">Saved ${savedDate}</div>
+                    </div>
+                `;
+            });
+            
+            collectionContent.innerHTML = content;
+            permanentCollectionPanel.classList.remove('hidden');
+        }
+        
+        // Initialize message stars when page loads
+        window.addEventListener('load', () => {
+            loadMessageStars();
+        });
+        
+    </script>
+</body>
+</html>
