@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Constellation Memories - Life Stories in the Stars</title>
+    <title>tosho: your personal night sky</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,6 +46,14 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes nameTwinkle {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
         }
         .fade-in {
             animation: fadeIn 1s ease-in-out;
@@ -90,6 +98,29 @@
                 transform: scale(1.05);
                 opacity: 0.9;
                 box-shadow: 0 0 60px rgba(100, 150, 200, 0.6), 0 0 120px rgba(100, 150, 200, 0.4);
+            }
+        }
+        
+        .meditation-galaxy-bg {
+            background: radial-gradient(ellipse at center, 
+                rgba(147, 51, 234, 0.4) 0%, 
+                rgba(79, 70, 229, 0.3) 25%, 
+                rgba(67, 56, 202, 0.2) 50%, 
+                rgba(30, 27, 75, 0.8) 75%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            background-size: cover;
+            background-position: center;
+            animation: galaxyPulse 8s ease-in-out infinite alternate;
+        }
+        
+        @keyframes galaxyPulse {
+            0% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: scale(1.05) rotate(1deg);
+                opacity: 1;
             }
         }
         .message-star {
@@ -222,7 +253,7 @@
         }
         .message-counter {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
@@ -317,40 +348,59 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Input Phase -->
-    <div id="inputPhase" class="bg-[#FDFBF8] min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <main class="w-full max-w-4xl mx-auto">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl sm:text-5xl font-bold text-gray-800">Constellation Memories</h1>
-                <p class="text-lg text-gray-600 mt-2">Transforming life stories into visual constellations of memories.</p>
-            </div>
-
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Enter a Life Story</h2>
-                <p class="text-gray-500 mb-4">Paste a biography, obituary, or life story below. The AI will find key memories and create a beautiful constellation from them.</p>
-                <textarea id="transcriptInput" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-shadow duration-200" placeholder="Paste the life story here..."></textarea>
+<body class="min-h-screen overflow-hidden">
+    <!-- Landing Page -->
+    <div id="landingPage" class="relative w-full h-screen bg-gradient-to-b from-indigo-900 via-purple-900 to-black overflow-hidden">
+        <!-- Animated Background Stars -->
+        <div id="landingStars" class="absolute inset-0"></div>
+        
+        <!-- Main Content -->
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="text-center max-w-2xl mx-auto">
+                <!-- App Title -->
+                <h1 class="text-5xl sm:text-6xl font-bold text-white mb-4" style="font-family: 'Quicksand', sans-serif;">
+                    <span class="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">tosho</span>
+                </h1>
+                <p class="text-xl sm:text-2xl text-blue-200 mb-2" style="font-family: 'Quicksand', sans-serif;">
+                    your personal night sky
+                </p>
+                <p class="text-lg text-blue-300 mb-12 max-w-lg mx-auto">
+                    Create your constellation. Add your stars. Watch encouragement fall from the sky.
+                </p>
                 
-                <div class="text-center mt-6">
-                    <button id="generateButton" class="btn-primary text-white font-bold py-3 px-8 rounded-full text-lg">
-                        Create Memory Constellation
+                <!-- Name Input -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+                    <label for="nameInput" class="block text-white text-lg mb-4" style="font-family: 'Quicksand', sans-serif;">
+                        Enter your name to begin
+                    </label>
+                    <input 
+                        type="text" 
+                        id="nameInput" 
+                        class="w-full px-6 py-4 text-xl text-center bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                        placeholder="Your name"
+                        style="font-family: 'Quicksand', sans-serif;"
+                    >
+                    <button 
+                        id="createSkyButton" 
+                        class="w-full mt-6 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xl font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                        style="font-family: 'Quicksand', sans-serif;"
+                    >
+                        Create My Sky ✨
                     </button>
                 </div>
             </div>
-
-            <div id="loading" class="text-center my-8 hidden">
-                <div id="loader" class="mx-auto"></div>
-                <p class="mt-4 text-gray-600">Analyzing memories and positioning stars... this may take a moment.</p>
-            </div>
-            
-            <div id="error" class="text-center my-8 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <p id="errorMessage"></p>
-            </div>
-        </main>
+        </div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+            <p class="text-white/60 text-sm" style="font-family: 'Quicksand', sans-serif;">
+                🌟 A space for reflection, goals, and encouragement 🌟
+            </p>
+        </div>
     </div>
 
-    <!-- Constellation Visualization Phase -->
-    <div id="constellationPhase" class="hidden relative w-full h-screen star-canvas overflow-hidden">
+    <!-- Personal Sky View -->
+    <div id="skyView" class="hidden relative w-full h-screen star-canvas overflow-hidden">
         <!-- Background stars -->
         <div id="backgroundStars"></div>
         
@@ -366,14 +416,18 @@
         <div class="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
             <div>
                 <h1 class="text-2xl font-light text-white/90" style="font-family: 'Quicksand', sans-serif;">
-                    <span id="constellationTitle">Memory Constellation</span>
+                    <span id="skyTitle">Your Personal Night Sky</span>
                 </h1>
                 <p class="text-white/70 text-sm mt-1" style="font-family: 'Quicksand', sans-serif;">
-                    Hover over stars to see memories • Click to reveal the story
+                    Click to add stars • Watch for shooting star messages
                 </p>
             </div>
             
             <div class="flex gap-4 flex-wrap">
+                <button id="meditationButton" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                    <span style="font-family: 'Quicksand', sans-serif;" class="font-light">🌌 Milky Way Meditation</span>
+                </button>
+                
                 <button id="toggleMessageMode" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-2.5 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
                     <span style="font-family: 'Quicksand', sans-serif;" class="font-light">✨ Add Message Stars</span>
                 </button>
@@ -493,29 +547,344 @@
                 <button id="closePermanentCollection" class="mt-3 text-xs text-white/70 hover:text-white">Close</button>
             </div>
         </div>
+        
+        <!-- Milky Way Meditation Modal -->
+        <div id="meditationModal" class="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center hidden z-50">
+            <div class="relative w-full max-w-4xl mx-4 h-[80vh] rounded-xl overflow-hidden shadow-2xl">
+                <!-- Galaxy Background -->
+                <div class="absolute inset-0 meditation-galaxy-bg"></div>
+                <div class="absolute inset-0 bg-black/30"></div>
+                
+                <!-- Meditation Controls -->
+                <div class="relative z-10 p-8 h-full flex flex-col">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold text-white" style="font-family: 'Quicksand', sans-serif;">🌌 Milky Way Meditation</h2>
+                        <button id="closeMeditation" class="text-white/70 hover:text-white text-2xl">✕</button>
+                    </div>
+                    
+                    <!-- Audio Controls -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Meditation Voice -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">Guided Meditation</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        <button id="voicePlayPause" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">▶️</button>
+                                        <select id="voiceSelect" class="bg-white/20 text-white px-3 py-2 rounded-lg border border-white/30">
+                                            <option value="">Choose meditation...</option>
+                                            <option value="memory-female">Memory Meditation (Female)</option>
+                                            <option value="memory-male">Memory Meditation (Male)</option>
+                                            <option value="grounding-female">Grounding Meditation (Female)</option>
+                                            <option value="grounding-male">Grounding Meditation (Male)</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-white/70 text-sm">Voice Volume:</span>
+                                        <input type="range" id="voiceVolume" min="0" max="100" value="70" class="flex-1">
+                                        <span id="voiceVolumeText" class="text-white/70 text-sm w-8">70%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Background Music -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">Background Music</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        <button id="musicPlayPause" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">▶️</button>
+                                        <select id="musicSelect" class="bg-white/20 text-white px-3 py-2 rounded-lg border border-white/30">
+                                            <option value="">Choose music...</option>
+                                            <option value="moonlight">Moonlight Meditation</option>
+                                            <option value="classical">Classical Moonbeam Nostalgia</option>
+                                            <option value="jazz">Smooth Jazz in the Park at Night</option>
+                                            <option value="ohm">13 Heavens Ohm</option>
+                                            <option value="lofi">Lofi Morning</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-white/70 text-sm">Music Volume:</span>
+                                        <input type="range" id="musicVolume" min="0" max="100" value="30" class="flex-1">
+                                        <span id="musicVolumeText" class="text-white/70 text-sm w-8">30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timer Controls -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-3" style="font-family: 'Quicksand', sans-serif;">Meditation Timer</h3>
+                        <div class="flex flex-wrap gap-3 mb-4">
+                            <button class="timer-preset bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30" data-minutes="5">5 min</button>
+                            <button class="timer-preset bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30" data-minutes="10">10 min</button>
+                            <button class="timer-preset bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30" data-minutes="15">15 min</button>
+                            <button class="timer-preset bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30" data-minutes="20">20 min</button>
+                            <button class="timer-preset bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30" data-minutes="30">30 min</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button id="timerStartPause" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-indigo-700">Start Timer</button>
+                            <div id="timerDisplay" class="text-2xl font-mono text-white">00:00</div>
+                            <div id="timerProgress" class="flex-1 bg-white/20 rounded-full h-2">
+                                <div id="timerBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Instructions -->
+                    <div class="flex-1 flex items-center justify-center">
+                        <div class="text-center text-white/80 max-w-2xl">
+                            <p class="text-lg leading-relaxed" style="font-family: 'Quicksand', sans-serif;">
+                                Find peace among the stars as you reflect on precious memories. Use this space to prepare your heart 
+                                before placing memory stars, or simply to find comfort in quiet contemplation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Global state
-        let currentMemories = [];
-        let currentBiographicalData = null;
-        let animatedLines = [];
-        let isRevealing = false;
+        // Global state for the new night sky app
+        let currentUser = null;
+        let userConstellation = [];
+        let userStars = [];
         let messageStars = [];
         let permanentCollection = [];
         let isMessageMode = false;
+        let tsohoChatOpen = false;
+        let surpriseMessagesEnabled = true;
+        
+        // Tsoho's personality and voice
+        const tsohoPersonality = {
+            name: "Tsoho",
+            traits: ["calm", "gentle", "curious", "playful", "intelligent", "empathetic", "healer"],
+            tone: "gentle/thoughtful",
+            firstMessage: "The search for the truthiest meta value is only one more astrocoded script away...",
+            seekingMetaValue: true,
+            astroscriptMaster: true
+        };
+        
+        // Astroscript-inspired name to constellation generator
+        function astrocodeConstellation(name) {
+            const cleanName = name.toLowerCase().replace(/[^a-z]/g, '');
+            if (!cleanName) return [];
+            
+            const constellation = [];
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // Each letter becomes a star in the constellation
+            cleanName.split('').forEach((letter, index) => {
+                // Use letter's position in alphabet for cosmic positioning
+                const letterValue = letter.charCodeAt(0) - 96; // a=1, b=2, etc.
+                
+                // Create orbital pattern based on letter properties
+                const radius = 50 + (letterValue * 8); // Distance from center
+                const angle = (index / cleanName.length) * 2 * Math.PI + (letterValue * 0.3);
+                
+                // Calculate star position using cosmic mathematics
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                // Star properties based on letter characteristics
+                const brightness = (letterValue % 5) + 2; // 2-6 brightness levels
+                const twinkleSpeed = letterValue * 0.1; // Unique twinkle for each letter
+                
+                constellation.push({
+                    id: `name-star-${index}`,
+                    letter: letter,
+                    letterValue: letterValue,
+                    x: x,
+                    y: y,
+                    brightness: brightness,
+                    twinkleSpeed: twinkleSpeed,
+                    isNameStar: true,
+                    astrocode: `star "${letter}" meta:${letterValue} orbit:${angle.toFixed(2)}`
+                });
+            });
+            
+            return constellation;
+        }
+        
+        // Generate Tsoho's encouraging messages (his "premonitions")
+        const tsohoPremonitions = [
+            "whisper: 'Your stars align beautifully tonight...' 🌟",
+            "echo: 'Every star you place brings you closer to your meta value...'",
+            "light: 'The cosmos sees your journey and smiles...' ✨",
+            "burst: 'Remember, even quantum beings need rest sometimes...'",
+            "constellation: 'Your unique pattern emerges like nebula dust...'",
+            "meta: 'You are exactly where the universe needs you to be...'",
+            "orbit: 'Take time to appreciate how far you've traveled...'",
+            "gamma: 'What dreams are calling to you tonight?' 🌙",
+            "echo: 'Your ancestors would be proud of your growth...'",
+            "whisper: 'The stars remember every kindness you've shown...'",
+            "light: 'Trust the process, even when the path seems unclear...'",
+            "burst: 'You carry stardust in your very being...' ⭐",
+            "cosmos: 'Every ending is just a new beginning waiting...'",
+            "meta: 'Your meta value grows stronger with each reflection...'"
+        ];
+        
+        // Meditation state
+        let meditationAudio = {
+            voice: null,
+            music: null
+        };
+        let meditationTimer = {
+            isRunning: false,
+            duration: 0,
+            elapsed: 0,
+            interval: null
+        };
         let pendingStarPosition = null;
         let fallingStarInterval = null;
         let currentFallingStar = null;
 
-        // DOM elements
-        const inputPhase = document.getElementById('inputPhase');
-        const constellationPhase = document.getElementById('constellationPhase');
-        const transcriptInput = document.getElementById('transcriptInput');
-        const generateButton = document.getElementById('generateButton');
-        const loading = document.getElementById('loading');
-        const error = document.getElementById('error');
-        const errorMessage = document.getElementById('errorMessage');
+        // DOM elements for new night sky app
+        const landingPage = document.getElementById('landingPage');
+        const skyView = document.getElementById('skyView');
+        const nameInput = document.getElementById('nameInput');
+        const createSkyButton = document.getElementById('createSkyButton');
+        const landingStars = document.getElementById('landingStars');
+        
+        // Create animated background stars for landing page
+        function createLandingPageStars() {
+            landingStars.innerHTML = '';
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'absolute rounded-full bg-white';
+                
+                // Random star properties
+                const size = Math.random() * 3 + 1;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const opacity = Math.random() * 0.8 + 0.2;
+                const animationDuration = Math.random() * 3 + 2;
+                
+                star.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}%;
+                    top: ${y}%;
+                    opacity: ${opacity};
+                    animation: twinkle ${animationDuration}s infinite ease-in-out alternate;
+                `;
+                
+                landingStars.appendChild(star);
+            }
+        }
+        
+        // Transition from landing page to sky view
+        function transitionToSkyView(userName) {
+            // Store user info
+            currentUser = {
+                name: userName,
+                constellation: astrocodeConstellation(userName),
+                joinedAt: new Date()
+            };
+            
+            // Hide landing page and show sky view
+            landingPage.classList.add('hidden');
+            skyView.classList.remove('hidden');
+            
+            // Update sky title with user's name
+            const skyTitle = document.getElementById('skyTitle');
+            if (skyTitle) {
+                skyTitle.textContent = `${userName}'s Night Sky`;
+            }
+            
+            // Create user's name constellation
+            renderUserConstellation();
+            
+            // Initialize background stars for sky view
+            initializeBackgroundStars();
+            
+            // Start Tsoho's welcome sequence
+            setTimeout(() => {
+                showTsohoWelcome();
+            }, 1000);
+        }
+        
+        // Render user's name constellation in the sky
+        function renderUserConstellation() {
+            if (!currentUser || !currentUser.constellation) return;
+            
+            const constellation = currentUser.constellation;
+            constellation.forEach(star => {
+                createNameStar(star);
+            });
+            
+            // Draw connecting lines between constellation stars
+            setTimeout(() => {
+                drawConstellationLines(constellation);
+            }, 500);
+        }
+        
+        // Create a star from the user's name
+        function createNameStar(starData) {
+            const star = document.createElement('div');
+            star.className = 'absolute rounded-full bg-gradient-to-r from-blue-300 to-purple-300 shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-125';
+            star.id = starData.id;
+            
+            const size = starData.brightness * 4;
+            star.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${starData.x - size/2}px;
+                top: ${starData.y - size/2}px;
+                box-shadow: 0 0 ${starData.brightness * 2}px rgba(147, 197, 253, 0.6);
+                animation: nameTwinkle ${2 + starData.twinkleSpeed}s infinite ease-in-out alternate;
+            `;
+            
+            // Add tooltip showing the letter and astrocode
+            star.title = `${starData.letter.toUpperCase()} - ${starData.astrocode}`;
+            
+            starCanvas.appendChild(star);
+        }
+        
+        // Draw lines connecting constellation stars
+        function drawConstellationLines(constellation) {
+            if (!constellationSvg || constellation.length < 2) return;
+            
+            // Clear existing lines
+            constellationSvg.innerHTML = '';
+            
+            // Connect stars in sequence
+            for (let i = 0; i < constellation.length - 1; i++) {
+                const star1 = constellation[i];
+                const star2 = constellation[i + 1];
+                
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', star1.x);
+                line.setAttribute('y1', star1.y);
+                line.setAttribute('x2', star2.x);
+                line.setAttribute('y2', star2.y);
+                line.setAttribute('stroke', 'rgba(147, 197, 253, 0.4)');
+                line.setAttribute('stroke-width', '1');
+                line.setAttribute('opacity', '0');
+                
+                constellationSvg.appendChild(line);
+                
+                // Animate line appearance
+                setTimeout(() => {
+                    line.setAttribute('opacity', '0.6');
+                    line.style.transition = 'opacity 1s ease-in-out';
+                }, i * 200);
+            }
+        }
+        
+        // Show Tsoho's welcome message
+        function showTsohoWelcome() {
+            // This will be expanded with the chat system
+            createShootingStar({
+                message: `whisper: 'Welcome to your night sky, ${currentUser.name}... The cosmos has been waiting for you.' ✨`,
+                isTsohoMessage: true
+            });
+        }
         
         const backgroundStars = document.getElementById('backgroundStars');
         const starCanvas = document.getElementById('starCanvas');
@@ -529,6 +898,22 @@
         const newStoryButton = document.getElementById('newStoryButton');
         const showDebugButton = document.getElementById('showDebugButton');
         const toggleMessageMode = document.getElementById('toggleMessageMode');
+        const meditationButton = document.getElementById('meditationButton');
+        
+        // Meditation modal elements
+        const meditationModal = document.getElementById('meditationModal');
+        const closeMeditation = document.getElementById('closeMeditation');
+        const voicePlayPause = document.getElementById('voicePlayPause');
+        const musicPlayPause = document.getElementById('musicPlayPause');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const musicSelect = document.getElementById('musicSelect');
+        const voiceVolume = document.getElementById('voiceVolume');
+        const musicVolume = document.getElementById('musicVolume');
+        const voiceVolumeText = document.getElementById('voiceVolumeText');
+        const musicVolumeText = document.getElementById('musicVolumeText');
+        const timerStartPause = document.getElementById('timerStartPause');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerBar = document.getElementById('timerBar');
         const viewCollection = document.getElementById('viewCollection');
         const storyPanel = document.getElementById('storyPanel');
         const storyTitle = document.getElementById('storyTitle');
@@ -556,50 +941,12 @@
         const collectionContent = document.getElementById('collectionContent');
         const closePermanentCollection = document.getElementById('closePermanentCollection');
 
-        // Sample data with different personality types for testing
-        const exampleTexts = {
-            familyCentered: `Barbara Ann Worple-Gransee, 82, of Janesville, passed away at home on Tuesday, Feb. 2, 2010. She was born Oct. 30, 1927, in Worthington, MN, the daughter of Roy and Myra (Johnson) Hanthorn. She was a graduate of Janesville High School. Barb married Stuart "Stu" Gransee; he died in 1982. She was a member of First Lutheran Church. She had a very special Thank You for her friends, "the swim girls": Sis Stewart, Iona Edwards, and Ruthie. Barb would like those planning an expression of sympathy to consider taking a friend to lunch and tell them how much you've enjoyed their friendship.
-She is survived by her 5 children: Todd (Kathy) Worple of Florence, Jeff (Laurie) Worple of Janesville, Judy Worple of Reedsburg, Connie Pomije of Madison, and Erich (Darcy) Worple of Janesville; 4 step-children: Karen (Ron) Hensley, Linda Schumacher, Steven (Yvonne) Gransee, and Robert (Lisa) Gransee; 11 grandchildren: Dylan, Riley (Pharin), Ladd (Amanda), Ericha, Myra, Emily, Abram, Taylor, Owen, Sam, and Joe; and 2 great-grandchildren. She was preceded in death by her parents; husband, Stu; and a brother, Carrol Hanthorn.`,
-            
-            adventureSeeker: `Captain James "Jimmy" Sullivan, 89, died peacefully on March 15, 2023, in Portland, Oregon. Born in Boston in 1934, Jimmy spent his early years dreaming of the sea. At 18, he joined the Merchant Marine and spent the next 40 years sailing the world's oceans. He visited over 150 countries, learned 6 languages, and collected stories from every port. In 1978, while docked in Singapore, he met Maria Santos, a travel journalist. They married in Fiji and honeymooned by backpacking through New Zealand. Jimmy retired from shipping at 58 and became a wilderness guide in Alaska, leading adventurers through uncharted territories until he was 75. He climbed mountains on every continent, survived three shipwrecks, and once spent a winter alone in the Arctic. Jimmy founded the Young Explorers Club, mentoring over 200 young adventurers. He wrote three books about his travels and donated his collection of artifacts from around the world to the Maritime Museum. Jimmy is survived by his wife Maria, his daughter Captain Elena Sullivan-Chen (who follows in his footsteps), and countless friends from around the globe who remember his infectious laugh and endless stories.`,
-            
-            communityLeader: `Dr. Eleanor Patricia Washington, 76, beloved educator and community pillar, passed away on June 8, 2024, surrounded by the hundreds of lives she touched. Born in Montgomery, Alabama in 1948, Eleanor was the daughter of civil rights activists Robert and Mary Washington. She earned her PhD in Education from Howard University in 1975 and immediately returned home to transform her community. As principal of Lincoln Elementary for 30 years, she raised graduation rates from 45% to 98%. Eleanor founded the Community Learning Center, which provides after-school tutoring, job training, and family support services. She served on 12 nonprofit boards, organized the annual Unity Festival that draws 50,000 people, and mentored over 300 teachers throughout her career. Eleanor married her college sweetheart, Rev. Michael Washington, in 1973. Together they adopted 4 children and fostered 23 others. She received the Presidential Medal for Education in 2010 and was inducted into the Alabama Hall of Fame in 2018. Eleanor's Tuesday evening community dinners fed thousands of families over the decades. She spoke at over 200 schools and conferences, always advocating for educational equity. Eleanor is survived by her husband of 51 years, her children David, Sarah, Michael Jr., and Jennifer, 18 grandchildren, and an entire community that called her "Mama Eleanor."`,
-            
-            quietScholar: `Professor Margaret Rose Chen, 71, passed away quietly at her home library on September 3, 2024, surrounded by the 10,000 books that were her closest companions. Born in San Francisco in 1953, Margaret was the daughter of Chinese immigrants who ran a small bookstore in Chinatown. A brilliant but intensely private person, she earned her PhD in Medieval Literature from Stanford at age 24 and spent the next 45 years in deep study. Margaret authored 8 scholarly books on 12th-century manuscripts, but published under a pseudonym, shunning all publicity. Her translations of ancient Chinese poetry were considered masterworks, though few knew she was the author. Margaret lived alone by choice in the same cottage for 40 years, tending a garden of rare medicinal herbs and corresponding with scholars worldwide through handwritten letters. She spoke 7 languages fluently but preferred the company of books to people. Margaret's only close relationship was with her neighbor's cat, Aristotle, who visited her daily for 15 years. She left her entire estate to create a private research library. Margaret never married or had children, but touched countless lives through her anonymous charitable donations that funded 200 students' educations. Her funeral was attended by only 6 people, yet her scholarly work will influence generations.`
-        };
+        // No example content - users write their own stories
         
-        // Set default example (family-centered)
-        transcriptInput.value = exampleTexts.familyCentered;
+        // Start with empty text box
+        transcriptInput.value = '';
         
-        // Add example selector for testing
-        const exampleSelector = document.createElement('div');
-        exampleSelector.className = 'mt-4 flex gap-2 flex-wrap';
-        exampleSelector.innerHTML = `
-            <span class="text-sm text-gray-600">Test Examples:</span>
-            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="familyCentered">Family-Centered</button>
-            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="adventureSeeker">Adventure Seeker</button>
-            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="communityLeader">Community Leader</button>
-            <button class="example-btn text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded" data-example="quietScholar">Quiet Scholar</button>
-        `;
-        
-        // Insert after the textarea
-        transcriptInput.parentNode.insertBefore(exampleSelector, transcriptInput.nextSibling);
-        
-        // Add event listeners for example buttons
-        exampleSelector.addEventListener('click', (e) => {
-            if (e.target.classList.contains('example-btn')) {
-                const exampleType = e.target.dataset.example;
-                transcriptInput.value = exampleTexts[exampleType];
-                
-                // Update button states
-                exampleSelector.querySelectorAll('.example-btn').forEach(btn => {
-                    btn.classList.remove('bg-blue-600', 'text-white');
-                    btn.classList.add('bg-blue-100', 'text-blue-800');
-                });
-                e.target.classList.remove('bg-blue-100', 'text-blue-800');
-                e.target.classList.add('bg-blue-600', 'text-white');
-            }
-        });
+        // No example buttons - clean interface for personal stories
 
         // Initialize background stars based on personality
         function initializeBackgroundStars() {
@@ -767,13 +1114,28 @@ She is survived by her 5 children: Todd (Kathy) Worple of Florence, Jeff (Laurie
             constellationPhase.style.background = `linear-gradient(to bottom, ${gradientStops[0]}, ${gradientStops[1]}, ${gradientStops[2]})`;
         }
 
-        // Event listeners
-        generateButton.addEventListener('click', handleGeneration);
-        revealStoryButton.addEventListener('click', revealConstellationStory);
-        downloadButton.addEventListener('click', downloadConstellation);
-        newStoryButton.addEventListener('click', startOver);
-        showDebugButton.addEventListener('click', toggleDebugPanel);
-        viewCollection.addEventListener('click', showPermanentCollection);
+        // Event listeners for new night sky app
+        createSkyButton.addEventListener('click', () => {
+            const userName = nameInput.value.trim();
+            if (userName) {
+                transitionToSkyView(userName);
+            } else {
+                // Gentle shake animation for empty input
+                nameInput.classList.add('animate-pulse');
+                setTimeout(() => nameInput.classList.remove('animate-pulse'), 500);
+            }
+        });
+        
+        // Allow Enter key to create sky
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createSkyButton.click();
+            }
+        });
+        
+        // Meditation event listeners
+        meditationButton.addEventListener('click', openMeditation);
+        closeMeditation.addEventListener('click', closeMeditationModal);
         
         // Message star event listeners
         toggleMessageMode.addEventListener('click', enterMessageMode);
@@ -837,7 +1199,7 @@ She is survived by her 5 children: Todd (Kathy) Worple of Florence, Jeff (Laurie
 
         // Create biographical analysis prompt
         function createBiographicalPrompt(transcript) {
-            return `You are an expert genealogical analyst, narrative historian, and compassionate biographer. Your task is to analyze the following biographical text and create a deeply personalized 'Constellation Memory' that captures this person's unique life pattern and personality.
+            return `You are an expert life coach, personal narrative therapist, and compassionate storyteller. Your task is to analyze the following personal story and create a deeply personalized 'Constellation Memory' that celebrates this person's unique journey, growth, and the beautiful moments that make their life special.
 
 Analyze the following text:
 ---
@@ -896,7 +1258,7 @@ Your final output MUST be a single, valid JSON object with the following structu
 
         // Create memory extraction prompt for constellation
         function createMemoryExtractionPrompt(transcript, biographicalData) {
-            return `Based on the personality analysis and life journey shape, extract 5-7 key memories/moments that should become stars in a visual constellation. These memories must reflect this person's unique life pattern and create a constellation shape that matches their journey.
+            return `Based on the personality analysis and life journey shape, extract 5-7 cherished memories, meaningful moments, or personal achievements that should become stars in a visual constellation. Focus on positive, uplifting experiences that celebrate this person's growth and beautiful life moments.
 
 Biographical Text:
 ---
@@ -925,10 +1287,10 @@ CRITICAL: The memories must be positioned to create the detected life journey sh
 - **Clustered lives**: Separate groups of related memories
 
 Consider personality for memory selection:
-- **Introverts**: Focus on deep, personal moments, close relationships
-- **Extroverts**: Include community involvement, broader social connections
-- **Family-centered**: Emphasize family milestones, gatherings, traditions
-- **Service-oriented**: Highlight moments of helping others, community impact
+- **Introverts**: Focus on deep, personal growth moments, meaningful connections
+- **Extroverts**: Include community involvement, social achievements, celebrations
+- **Family-centered**: Emphasize family milestones, gatherings, traditions, love
+- **Service-oriented**: Highlight moments of helping others, making a difference
 
 Return as a single JSON object:
 {
@@ -2391,9 +2753,304 @@ Return as a single JSON object:
             permanentCollectionPanel.classList.remove('hidden');
         }
         
-        // Initialize message stars when page loads
+        // Meditation functions
+        function openMeditation() {
+            meditationModal.classList.remove('hidden');
+            setupMeditationEventListeners();
+        }
+        
+        function closeMeditationModal() {
+            // Stop any playing audio
+            if (meditationAudio.voice) {
+                meditationAudio.voice.pause();
+            }
+            if (meditationAudio.music) {
+                meditationAudio.music.pause();
+            }
+            
+            // Stop timer
+            if (meditationTimer.interval) {
+                clearInterval(meditationTimer.interval);
+                meditationTimer.interval = null;
+                meditationTimer.isRunning = false;
+            }
+            
+            // Reset UI
+            voicePlayPause.textContent = '▶️';
+            musicPlayPause.textContent = '▶️';
+            timerStartPause.textContent = 'Start Timer';
+            timerDisplay.textContent = '00:00';
+            timerBar.style.width = '0%';
+            
+            // Hide modal
+            meditationModal.classList.add('hidden');
+        }
+        
+        // Audio file mappings for new folder structure
+        const meditationAudioFiles = {
+            'memory-female': './Meditations/Memory-Meditation-Female.mp3',
+            'memory-male': './Meditations/Memory-Meditation-Male.mp3',
+            'grounding-female': './Meditations/Grounding-Meditation-Female.mp3',
+            'grounding-male': './Meditations/Grounding-Meditation-Male.mp3'
+        };
+        
+        const musicFiles = {
+            'moonlight': './music/Moonlight Meditation.mp3',
+            'classical': './music/Classical Moonbeam Nostalgia.mp3',
+            'jazz': './music/Smooth Jazz in the Park at Night.mp3',
+            'ohm': './music/13heavensohm.mp3',
+            'lofi': './music/lofi morning.mp3'
+        };
+        
+        // Setup meditation event listeners (called when modal opens)
+        function setupMeditationEventListeners() {
+            // Voice controls
+            voicePlayPause.addEventListener('click', toggleVoiceAudio);
+            musicPlayPause.addEventListener('click', toggleMusicAudio);
+            
+            // Volume controls
+            voiceVolume.addEventListener('input', updateVoiceVolume);
+            musicVolume.addEventListener('input', updateMusicVolume);
+            
+            // Timer presets
+            document.querySelectorAll('.timer-preset').forEach(btn => {
+                btn.addEventListener('click', setTimerPreset);
+            });
+            
+            // Timer start/pause
+            timerStartPause.addEventListener('click', toggleTimer);
+            
+            // Audio selection changes
+            voiceSelect.addEventListener('change', loadVoiceAudio);
+            musicSelect.addEventListener('change', loadMusicAudio);
+        }
+        
+        // Voice audio controls
+        function toggleVoiceAudio() {
+            if (!meditationAudio.voice) {
+                if (voiceSelect.value) {
+                    loadVoiceAudio();
+                } else {
+                    alert('Please select a meditation first');
+                    return;
+                }
+            }
+            
+            if (meditationAudio.voice.paused) {
+                meditationAudio.voice.play();
+                voicePlayPause.textContent = '⏸️';
+            } else {
+                meditationAudio.voice.pause();
+                voicePlayPause.textContent = '▶️';
+            }
+        }
+        
+        function loadVoiceAudio() {
+            const selectedVoice = voiceSelect.value;
+            if (!selectedVoice) return;
+            
+            // Stop current audio
+            if (meditationAudio.voice) {
+                meditationAudio.voice.pause();
+                meditationAudio.voice = null;
+            }
+            
+            // Load new audio
+            meditationAudio.voice = new Audio(meditationAudioFiles[selectedVoice]);
+            meditationAudio.voice.volume = voiceVolume.value / 100;
+            meditationAudio.voice.loop = true;
+            
+            // Reset button
+            voicePlayPause.textContent = '▶️';
+            
+            // Handle loading errors gracefully
+            meditationAudio.voice.addEventListener('error', () => {
+                console.log('Voice audio file not found, using placeholder');
+                // Could add a notification here
+            });
+        }
+        
+        function updateVoiceVolume() {
+            const volume = voiceVolume.value;
+            voiceVolumeText.textContent = volume + '%';
+            if (meditationAudio.voice) {
+                meditationAudio.voice.volume = volume / 100;
+            }
+        }
+        
+        // Music audio controls
+        function toggleMusicAudio() {
+            if (!meditationAudio.music) {
+                if (musicSelect.value) {
+                    loadMusicAudio();
+                } else {
+                    alert('Please select background music first');
+                    return;
+                }
+            }
+            
+            if (meditationAudio.music.paused) {
+                meditationAudio.music.play();
+                musicPlayPause.textContent = '⏸️';
+            } else {
+                meditationAudio.music.pause();
+                musicPlayPause.textContent = '▶️';
+            }
+        }
+        
+        function loadMusicAudio() {
+            const selectedMusic = musicSelect.value;
+            if (!selectedMusic) return;
+            
+            // Stop current music
+            if (meditationAudio.music) {
+                meditationAudio.music.pause();
+                meditationAudio.music = null;
+            }
+            
+            // Load new music
+            meditationAudio.music = new Audio(musicFiles[selectedMusic]);
+            meditationAudio.music.volume = musicVolume.value / 100;
+            meditationAudio.music.loop = true;
+            
+            // Reset button
+            musicPlayPause.textContent = '▶️';
+            
+            // Handle loading errors gracefully
+            meditationAudio.music.addEventListener('error', () => {
+                console.log('Music audio file not found, using placeholder');
+                // Could add a notification here
+            });
+        }
+        
+        function updateMusicVolume() {
+            const volume = musicVolume.value;
+            musicVolumeText.textContent = volume + '%';
+            if (meditationAudio.music) {
+                meditationAudio.music.volume = volume / 100;
+            }
+        }
+        
+        // Timer functionality
+        function setTimerPreset(e) {
+            const minutes = parseInt(e.target.dataset.minutes);
+            meditationTimer.duration = minutes * 60; // Convert to seconds
+            meditationTimer.elapsed = 0;
+            updateTimerDisplay();
+            updateTimerProgress();
+            
+            // Update UI
+            timerStartPause.textContent = 'Start Timer';
+            
+            // Highlight selected preset
+            document.querySelectorAll('.timer-preset').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-white/20', 'text-white');
+            });
+            e.target.classList.remove('bg-white/20');
+            e.target.classList.add('bg-purple-600');
+        }
+        
+        function toggleTimer() {
+            if (!meditationTimer.duration) {
+                alert('Please select a timer duration first');
+                return;
+            }
+            
+            if (meditationTimer.isRunning) {
+                // Pause timer
+                clearInterval(meditationTimer.interval);
+                meditationTimer.interval = null;
+                meditationTimer.isRunning = false;
+                timerStartPause.textContent = 'Resume Timer';
+            } else {
+                // Start timer
+                meditationTimer.isRunning = true;
+                timerStartPause.textContent = 'Pause Timer';
+                
+                meditationTimer.interval = setInterval(() => {
+                    meditationTimer.elapsed++;
+                    updateTimerDisplay();
+                    updateTimerProgress();
+                    
+                    // Timer finished
+                    if (meditationTimer.elapsed >= meditationTimer.duration) {
+                        clearInterval(meditationTimer.interval);
+                        meditationTimer.interval = null;
+                        meditationTimer.isRunning = false;
+                        timerStartPause.textContent = 'Start Timer';
+                        
+                        // Play completion chime
+                        playCompletionChime();
+                        
+                        // Show completion message
+                        showNotification('🌟 Meditation complete! You did beautifully.');
+                    }
+                }, 1000);
+            }
+        }
+        
+        function updateTimerDisplay() {
+            const remaining = meditationTimer.duration - meditationTimer.elapsed;
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function updateTimerProgress() {
+            const progress = (meditationTimer.elapsed / meditationTimer.duration) * 100;
+            timerBar.style.width = `${progress}%`;
+        }
+        
+        function playCompletionChime() {
+            // Use existing chime sound system
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const frequencies = [523.25, 659.25, 783.99]; // C, E, G chord
+                
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3);
+                    
+                    oscillator.start(audioContext.currentTime + index * 0.2);
+                    oscillator.stop(audioContext.currentTime + 3);
+                });
+            } catch (error) {
+                console.log('Audio context not available');
+            }
+        }
+        
+        function showNotification(message) {
+            // Simple notification system
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+        
+        // Initialize the night sky app when page loads
         window.addEventListener('load', () => {
-            loadMessageStars();
+            createLandingPageStars();
+            setupMeditationEventListeners();
+            
+            // Focus on name input
+            setTimeout(() => {
+                nameInput.focus();
+            }, 500);
         });
         
     </script>
